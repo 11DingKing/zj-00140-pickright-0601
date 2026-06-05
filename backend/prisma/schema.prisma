@@ -1,0 +1,116 @@
+// 儿童彩妆选购助手平台 - 数据库模型
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = "file:./dev.db"
+}
+
+// 品牌表
+model Brand {
+  id          Int      @id @default(autoincrement())
+  name        String   @unique
+  company     String   // 备案企业
+  creditCode  String?  // 统一社会信用代码
+  isWhitelist Boolean  @default(false) // 是否在白名单
+  description String?
+  createdAt   DateTime @default(now())
+  products    Product[]
+  whitelist   Whitelist?
+  blacklist   Blacklist?
+}
+
+// 产品表
+model Product {
+  id              Int        @id @default(autoincrement())
+  name            String
+  recordNumber    String     @unique // 备案号
+  brandId         Int
+  brand           Brand      @relation(fields: [brandId], references: [id])
+  category        String     // 品类：口红/眼影/腮红等
+  minAge          Int        // 适用最小年龄
+  maxAge          Int        // 适用最大年龄
+  isRegistered    Boolean    @default(true) // 是否在册
+  isMinimalFormula Boolean   @default(false) // 是否极简配方
+  ingredients     String     // 成分列表（JSON格式存储）
+  highAllergenIngredients String // 高致敏成分（JSON数组）
+  safetyScore     Int        // 基础安全分 0-100
+  trustIndex      Float      // 综合放心指数 0-10
+  specification   String?    // 规格
+  shelfLife       String?    // 保质期
+  createdAt       DateTime   @default(now())
+  updatedAt       DateTime   @updatedAt
+  reviews         Review[]
+  adverseReactions AdverseReaction[]
+  inspectionResults InspectionResult[]
+  blacklist       Blacklist?
+}
+
+// 白名单表
+model Whitelist {
+  id        Int      @id @default(autoincrement())
+  brandId   Int      @unique
+  brand     Brand    @relation(fields: [brandId], references: [id])
+  reason    String   // 入选理由
+  addedAt   DateTime @default(now())
+  expireAt  DateTime?
+}
+
+// 黑名单表
+model Blacklist {
+  id          Int      @id @default(autoincrement())
+  type        String   // "brand" 或 "product"
+  brandId     Int?     @unique
+  productId   Int?     @unique
+  brand       Brand?   @relation(fields: [brandId], references: [id])
+  product     Product? @relation(fields: [productId], references: [id])
+  reason      String   // 处罚原因
+  penaltyDate DateTime // 处罚日期
+  source      String   // 来源：市监局/药监局等
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+}
+
+// 用户评价表
+model Review {
+  id              Int      @id @default(autoincrement())
+  productId       Int
+  product         Product  @relation(fields: [productId], references: [id])
+  childAge        Int      // 孩子年龄
+  skinType        String   // 肤质：normal/dry/oily/sensitive
+  rating          Int      // 评分 1-5
+  content         String   // 评价内容
+  hasAllergy      Boolean  @default(false) // 是否有过敏反应
+  allergySymptoms String?  // 过敏症状（JSON数组）
+  usageDuration   String?  // 使用时长
+  createdAt       DateTime @default(now())
+}
+
+// 不良反应通报表
+model AdverseReaction {
+  id          Int      @id @default(autoincrement())
+  productId   Int
+  product     Product  @relation(fields: [productId], references: [id])
+  title       String   // 通报标题
+  description String   // 通报内容
+  reportDate  DateTime // 通报日期
+  source      String   // 来源
+  severity    String   // 严重程度：一般/严重
+  createdAt   DateTime @default(now())
+}
+
+// 抽检结果表
+model InspectionResult {
+  id          Int      @id @default(autoincrement())
+  productId   Int
+  product     Product  @relation(fields: [productId], references: [id])
+  inspectionOrg String  // 抽检机构
+  inspectionDate DateTime // 抽检日期
+  result      String   // 结果：合格/不合格
+  unqualifiedItems String? // 不合格项目
+  source      String   // 来源
+  createdAt   DateTime @default(now())
+}
