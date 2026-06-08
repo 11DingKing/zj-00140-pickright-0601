@@ -9,7 +9,15 @@ const prisma = new PrismaClient();
 export const getRecommendedProducts = async (req: Request, res: Response) => {
   try {
     const params = { ...req.query, ...req.body };
-    const { childAge, skinType, category, excludeHighAllergen, age: ageParam } = params;
+    const {
+      childAge,
+      skinType,
+      category,
+      excludeHighAllergen,
+      excludeAllergenProducts,
+      age: ageParam,
+      usePersonalization,
+    } = params;
 
     const actualAge = childAge || ageParam;
 
@@ -25,6 +33,15 @@ export const getRecommendedProducts = async (req: Request, res: Response) => {
     const validSkinTypes = ['normal', 'dry', 'oily', 'sensitive'];
     if (!validSkinTypes.includes(skinType)) {
       return res.status(400).json({ error: '请选择有效的肤质类型' });
+    }
+
+    const parentId = parseInt(req.headers["x-parent-id"] as string) || 1;
+
+    let allergenProfiles: any[] = [];
+    if (usePersonalization !== false && usePersonalization !== "false") {
+      allergenProfiles = await prisma.allergenProfile.findMany({
+        where: { parentId },
+      });
     }
 
     // 获取所有合规产品
@@ -52,8 +69,19 @@ export const getRecommendedProducts = async (req: Request, res: Response) => {
       childAge: age,
       skinType,
       category: category || undefined,
-      excludeHighAllergen: excludeHighAllergen === true || excludeHighAllergen === 'true'
+      excludeHighAllergen:
+        excludeHighAllergen === true || excludeHighAllergen === "true",
+      allergenProfiles,
+      excludeAllergenProducts:
+        excludeAllergenProducts === true || excludeAllergenProducts === "true",
     });
+
+    // 统计过滤信息
+    const totalProducts = products.length;
+    const filteredCount = totalProducts - recommendations.length;
+    const allergenFilteredCount = recommendations.filter(
+      (r) => r.product.allergenInfo?.hasAllergen,
+    ).length;
 
     // 格式化返回数据
     const result = recommendations.map(item => ({
@@ -61,7 +89,8 @@ export const getRecommendedProducts = async (req: Request, res: Response) => {
       ingredients: JSON.parse(item.product.ingredients || '[]'),
       highAllergenIngredients: JSON.parse(item.product.highAllergenIngredients || '[]'),
       trustLevel: getTrustLevel(item.product.trustIndex),
-      matchScore: Math.round(item.matchScore)
+      matchScore: Math.round(item.matchScore),
+      allergenInfo: item.product.allergenInfo,
     }));
 
     res.json({
@@ -71,8 +100,21 @@ export const getRecommendedProducts = async (req: Request, res: Response) => {
         childAge: age,
         skinType,
         category: category || null,
-        excludeHighAllergen: excludeHighAllergen === true || excludeHighAllergen === 'true'
-      }
+        excludeHighAllergen:
+          excludeHighAllergen === true || excludeHighAllergen === "true",
+        excludeAllergenProducts:
+          excludeAllergenProducts === true ||
+          excludeAllergenProducts === "true",
+        usePersonalization:
+          usePersonalization !== false && usePersonalization !== "false",
+      },
+      stats: {
+        totalProducts,
+        returnedCount: result.length,
+        filteredCount,
+        allergenFilteredCount,
+        userAllergenCount: allergenProfiles.length,
+      },
     });
   } catch (error) {
     console.error('获取推荐失败:', error);

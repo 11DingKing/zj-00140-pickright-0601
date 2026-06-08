@@ -522,6 +522,215 @@ async function main() {
     }
   }
 
+  // 创建家长用户
+  const parents = [
+    {
+      name: "王妈妈",
+      phone: "13800000001",
+      childName: "小宝",
+      childAge: 5,
+      skinType: "sensitive",
+    },
+    {
+      name: "李妈妈",
+      phone: "13800000002",
+      childName: "贝贝",
+      childAge: 7,
+      skinType: "dry",
+    },
+    {
+      name: "张妈妈",
+      phone: "13800000003",
+      childName: "朵朵",
+      childAge: 6,
+      skinType: "oily",
+    },
+  ];
+
+  const createdParents = [];
+  for (const parent of parents) {
+    const p = await prisma.parent.create({
+      data: parent,
+    });
+    createdParents.push(p);
+  }
+  console.log(`👨‍👩‍👧 已创建 ${createdParents.length} 个家长用户`);
+
+  // 创建过敏原档案
+  const allergenProfiles = [
+    {
+      parentId: 1,
+      allergenType: "香精",
+      allergenName: "日用香精",
+      severity: "严重",
+      description: "接触后会出现皮肤红肿、瘙痒",
+    },
+    {
+      parentId: 1,
+      allergenType: "着色剂",
+      allergenName: "胭脂红",
+      severity: "中度",
+      description: "使用后唇部会出现轻微刺痛",
+    },
+    {
+      parentId: 1,
+      allergenType: "防腐剂",
+      allergenName: "尼泊金酯",
+      severity: "轻微",
+      description: "长期使用可能导致皮肤干燥",
+    },
+    {
+      parentId: 2,
+      allergenType: "香精",
+      allergenName: "草莓香精",
+      severity: "严重",
+      description: "严重过敏反应，会出现呼吸困难",
+    },
+    {
+      parentId: 2,
+      allergenType: "着色剂",
+      allergenName: "日落黄",
+      severity: "中度",
+      description: "使用后皮肤发红",
+    },
+    {
+      parentId: 3,
+      allergenType: "矿物油",
+      allergenName: "液体石蜡",
+      severity: "轻微",
+      description: "容易导致毛孔堵塞",
+    },
+  ];
+
+  for (const ap of allergenProfiles) {
+    await prisma.allergenProfile.create({
+      data: ap,
+    });
+  }
+  console.log(`🌿 已创建 ${allergenProfiles.length} 条过敏原档案`);
+
+  // 创建产品订阅 - 选择前3个产品订阅
+  const subscriptions = [
+    {
+      parentId: 1,
+      productId: 1,
+      notifyOnAdverseReaction: true,
+      notifyOnInspection: true,
+    },
+    {
+      parentId: 1,
+      productId: 3,
+      notifyOnAdverseReaction: true,
+      notifyOnInspection: true,
+    },
+    {
+      parentId: 1,
+      productId: 5,
+      notifyOnAdverseReaction: true,
+      notifyOnInspection: false,
+    },
+    {
+      parentId: 2,
+      productId: 2,
+      notifyOnAdverseReaction: true,
+      notifyOnInspection: true,
+    },
+    {
+      parentId: 2,
+      productId: 4,
+      notifyOnAdverseReaction: true,
+      notifyOnInspection: true,
+    },
+    {
+      parentId: 3,
+      productId: 1,
+      notifyOnAdverseReaction: true,
+      notifyOnInspection: true,
+    },
+  ];
+
+  for (const sub of subscriptions) {
+    const productIndex = sub.productId - 1;
+    if (productIndex >= 0 && productIndex < createdProducts.length) {
+      try {
+        await prisma.productSubscription.create({
+          data: {
+            ...sub,
+            productId: createdProducts[productIndex].id,
+          },
+        });
+      } catch (e) {
+        // 忽略重复订阅
+      }
+    }
+  }
+  console.log(`📩 已创建 ${subscriptions.length} 条产品订阅`);
+
+  // 创建通知 - 针对已有不良反应和抽检结果
+  const notifications = [];
+
+  // 为已有不良反应创建通知
+  for (let i = 0; i < Math.min(2, adverseReactions.length); i++) {
+    const ar = adverseReactions[i];
+    const productIndex = ar.productId - 1;
+    if (productIndex >= 0 && productIndex < createdProducts.length) {
+      // 查找订阅了该产品的家长
+      const subs = await prisma.productSubscription.findMany({
+        where: {
+          productId: createdProducts[productIndex].id,
+          isActive: true,
+          notifyOnAdverseReaction: true,
+        },
+      });
+
+      for (const sub of subs) {
+        notifications.push({
+          parentId: sub.parentId,
+          type: "adverse_reaction",
+          title: `⚠️ 订阅产品不良反应通报`,
+          content: `您关注的「${createdProducts[productIndex].name}」被通报新的不良反应：${ar.description}`,
+          productId: createdProducts[productIndex].id,
+          relatedId: i + 1,
+        });
+      }
+    }
+  }
+
+  // 为已有抽检不合格创建通知
+  for (let i = 0; i < Math.min(2, inspectionResults.length); i++) {
+    const ir = inspectionResults[i];
+    if (ir.result === "不合格") {
+      const productIndex = ir.productId - 1;
+      if (productIndex >= 0 && productIndex < createdProducts.length) {
+        const subs = await prisma.productSubscription.findMany({
+          where: {
+            productId: createdProducts[productIndex].id,
+            isActive: true,
+            notifyOnInspection: true,
+          },
+        });
+
+        for (const sub of subs) {
+          notifications.push({
+            parentId: sub.parentId,
+            type: "inspection_failed",
+            title: `🚨 订阅产品抽检不合格`,
+            content: `您关注的「${createdProducts[productIndex].name}」抽检不合格，不合格项：${ir.unqualifiedItems}`,
+            productId: createdProducts[productIndex].id,
+            relatedId: i + 1,
+          });
+        }
+      }
+    }
+  }
+
+  for (const notif of notifications) {
+    await prisma.notification.create({
+      data: notif,
+    });
+  }
+  console.log(`🔔 已创建 ${notifications.length} 条推送通知`);
+
   console.log(`
 ╔══════════════════════════════════════════════════════════╗
 ║                                                          ║
@@ -535,6 +744,15 @@ async function main() {
 ║      评价: ${reviews.length} 条                                        ║
 ║      不良反应通报: ${adverseReactions.length} 条                             ║
 ║      抽检记录: ${inspectionResults.length} 条                                ║
+║      家长用户: ${createdParents.length} 个                                      ║
+║      过敏原档案: ${allergenProfiles.length} 条                                   ║
+║      产品订阅: ${subscriptions.length} 条                                     ║
+║      推送通知: ${notifications.length} 条                                     ║
+║                                                          ║
+║   👤 测试家长账号 (x-parent-id):                         ║
+║      1 - 王妈妈 (5岁敏感肌, 对香精/胭脂红过敏)          ║
+║      2 - 李妈妈 (7岁干皮, 对草莓香精/日落黄过敏)         ║
+║      3 - 张妈妈 (6岁油皮, 对液体石蜡过敏)               ║
 ║                                                          ║
 ╚══════════════════════════════════════════════════════════╝
   `);

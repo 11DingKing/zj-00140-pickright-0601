@@ -47,6 +47,8 @@ model Product {
   adverseReactions AdverseReaction[]
   inspectionResults InspectionResult[]
   blacklist       Blacklist?
+  subscriptions   ProductSubscription[]
+  notifications   Notification[]
 }
 
 // 白名单表
@@ -112,5 +114,62 @@ model InspectionResult {
   result      String   // 结果：合格/不合格
   unqualifiedItems String? // 不合格项目
   source      String   // 来源
+  createdAt   DateTime @default(now())
+}
+
+// 家长用户表
+model Parent {
+  id          Int      @id @default(autoincrement())
+  name        String   // 家长姓名
+  phone       String   @unique // 手机号
+  childName   String   // 孩子姓名
+  childAge    Int      // 孩子年龄
+  skinType    String   // 孩子肤质
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  allergenProfiles AllergenProfile[]
+  subscriptions ProductSubscription[]
+  notifications Notification[]
+}
+
+// 过敏原档案表
+model AllergenProfile {
+  id          Int      @id @default(autoincrement())
+  parentId    Int
+  parent      Parent   @relation(fields: [parentId], references: [id])
+  allergenType String  // 过敏原类型：香精/着色剂/防腐剂/其他
+  allergenName String  // 过敏原名称
+  severity    String   // 严重程度：轻微/中度/严重
+  description String?  // 过敏反应描述
+  createdAt   DateTime @default(now())
+}
+
+// 产品订阅表
+model ProductSubscription {
+  id          Int      @id @default(autoincrement())
+  parentId    Int
+  parent      Parent   @relation(fields: [parentId], references: [id])
+  productId   Int
+  product     Product  @relation(fields: [productId], references: [id])
+  notifyOnAdverseReaction Boolean @default(true) // 不良反应通报时提醒
+  notifyOnInspection Boolean @default(true) // 抽检不合格时提醒
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  @@unique([parentId, productId])
+}
+
+// 推送通知表
+model Notification {
+  id          Int      @id @default(autoincrement())
+  parentId    Int
+  parent      Parent   @relation(fields: [parentId], references: [id])
+  type        String   // 通知类型：allergen_warning / adverse_reaction / inspection_failed
+  title       String   // 通知标题
+  content     String   // 通知内容
+  productId   Int?
+  product     Product? @relation(fields: [productId], references: [id])
+  relatedId   Int?     // 关联的不良反应ID或抽检结果ID
+  isRead      Boolean  @default(false)
   createdAt   DateTime @default(now())
 }
