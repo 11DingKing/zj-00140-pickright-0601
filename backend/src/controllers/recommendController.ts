@@ -1,9 +1,11 @@
-import { Request, Response } from 'express';
-import { PrismaClient } from '@prisma/client';
-import { getRecommendations } from '../utils/recommend';
-import { getTrustLevel } from '../utils/trustIndex';
-
-const prisma = new PrismaClient();
+import { Request, Response } from "express";
+import prisma from "../utils/prisma";
+import { getRecommendations } from "../utils/recommend";
+import {
+  getTrustLevel,
+  calculateTrustIndex,
+  isBlacklistedProduct,
+} from "../utils/trustIndex";
 
 // 获取推荐产品
 export const getRecommendedProducts = async (req: Request, res: Response) => {
@@ -60,8 +62,11 @@ export const getRecommendedProducts = async (req: Request, res: Response) => {
             whitelist: true
           }
         },
-        blacklist: true
-      }
+        blacklist: true,
+        reviews: true,
+        adverseReactions: true,
+        inspectionResults: true,
+      },
     });
 
     // 计算推荐结果
@@ -83,15 +88,25 @@ export const getRecommendedProducts = async (req: Request, res: Response) => {
       (r) => r.product.allergenInfo?.hasAllergen,
     ).length;
 
-    // 格式化返回数据
-    const result = recommendations.map(item => ({
-      ...item.product,
-      ingredients: JSON.parse(item.product.ingredients || '[]'),
-      highAllergenIngredients: JSON.parse(item.product.highAllergenIngredients || '[]'),
-      trustLevel: getTrustLevel(item.product.trustIndex),
-      matchScore: Math.round(item.matchScore),
-      allergenInfo: item.product.allergenInfo,
-    }));
+    // 格式化返回数据，实时计算放心指数
+    const result = recommendations.map((item) => {
+      const calculatedTrustIndex = calculateTrustIndex({
+        product: item.product as any,
+      });
+      return {
+        ...item.product,
+        ingredients: JSON.parse(item.product.ingredients || "[]"),
+        highAllergenIngredients: JSON.parse(
+          item.product.highAllergenIngredients || "[]",
+        ),
+        trustIndex: calculatedTrustIndex,
+        trustLevel: getTrustLevel(calculatedTrustIndex),
+        isBlacklisted: isBlacklistedProduct(item.product as any),
+        matchScore: Math.round(item.matchScore),
+        reviewCount: (item.product as any).reviews?.length || 0,
+        allergenInfo: item.product.allergenInfo,
+      };
+    });
 
     res.json({
       success: true,

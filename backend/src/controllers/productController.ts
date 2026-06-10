@@ -1,9 +1,11 @@
 import { Request, Response } from "express";
-import { PrismaClient } from "@prisma/client";
-import { getTrustLevel } from "../utils/trustIndex";
+import prisma from "../utils/prisma";
+import {
+  getTrustLevel,
+  calculateTrustIndex,
+  isBlacklistedProduct,
+} from "../utils/trustIndex";
 import { checkProductAllergens } from "../utils/allergen";
-
-const prisma = new PrismaClient();
 
 // 搜索产品（按产品名或备案号）
 export const searchProducts = async (req: Request, res: Response) => {
@@ -30,7 +32,7 @@ export const searchProducts = async (req: Request, res: Response) => {
     const parentId = parseInt(req.headers["x-parent-id"] as string) || 1;
 
     let allergenProfiles: any[] = [];
-    if (usePersonalization !== false && usePersonalization !== "false") {
+    if (usePersonalization !== "false") {
       allergenProfiles = await prisma.allergenProfile.findMany({
         where: { parentId },
       });
@@ -45,20 +47,23 @@ export const searchProducts = async (req: Request, res: Response) => {
           },
         },
         blacklist: true,
+        reviews: true,
         adverseReactions: true,
         inspectionResults: true,
         _count: {
           select: { reviews: true },
         },
       },
-      orderBy: { trustIndex: "desc" },
       take: 50,
     });
 
-    // 处理返回数据，添加放心等级信息和过敏原检测
+    // 处理返回数据，实时计算放心指数，添加放心等级信息和过敏原检测
     const result = products.map((product) => {
-      const trustLevel = getTrustLevel(product.trustIndex);
-      const isBlacklisted = !!product.blacklist || !!product.brand.blacklist;
+      const calculatedTrustIndex = calculateTrustIndex({
+        product: product as any,
+      });
+      const trustLevel = getTrustLevel(calculatedTrustIndex);
+      const isBlacklisted = isBlacklistedProduct(product as any);
 
       let allergenInfo = null;
       if (allergenProfiles.length > 0) {
@@ -71,6 +76,7 @@ export const searchProducts = async (req: Request, res: Response) => {
         highAllergenIngredients: JSON.parse(
           product.highAllergenIngredients || "[]",
         ),
+        trustIndex: calculatedTrustIndex,
         trustLevel,
         isBlacklisted,
         reviewCount: product._count.reviews,
@@ -78,8 +84,11 @@ export const searchProducts = async (req: Request, res: Response) => {
       };
     });
 
-    // 按照过敏原警告排序：有过敏原警告的排在后面，严重的排在最后
+    // 排序：黑名单产品排最后，然后按过敏原警告排序，最后按放心指数排序
     result.sort((a, b) => {
+      if (a.isBlacklisted && !b.isBlacklisted) return 1;
+      if (!a.isBlacklisted && b.isBlacklisted) return -1;
+
       const aHasAllergen = a.allergenInfo?.hasAllergen ? 1 : 0;
       const bHasAllergen = b.allergenInfo?.hasAllergen ? 1 : 0;
 
@@ -157,8 +166,11 @@ export const getProductDetail = async (req: Request, res: Response) => {
       return res.status(404).json({ error: "产品不存在" });
     }
 
-    const trustLevel = getTrustLevel(product.trustIndex);
-    const isBlacklisted = !!product.blacklist || !!product.brand.blacklist;
+    const calculatedTrustIndex = calculateTrustIndex({
+      product: product as any,
+    });
+    const trustLevel = getTrustLevel(calculatedTrustIndex);
+    const isBlacklisted = isBlacklistedProduct(product as any);
 
     // 统计过敏率
     const totalReviews = product.reviews.length;
@@ -197,6 +209,7 @@ export const getProductDetail = async (req: Request, res: Response) => {
         ...r,
         allergySymptoms: r.allergySymptoms ? JSON.parse(r.allergySymptoms) : [],
       })),
+      trustIndex: calculatedTrustIndex,
       trustLevel,
       isBlacklisted,
       allergyRate,

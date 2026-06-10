@@ -1,13 +1,12 @@
 import React from "react";
-import { Card, Tag, Rate, Space, Tooltip, Alert } from "antd";
+import { Card, Tag, Rate, Space, Tooltip } from "antd";
 import {
   CheckCircleOutlined,
   ExclamationCircleOutlined,
   CloseCircleOutlined,
   StarOutlined,
   SafetyOutlined,
-  AllergyOutlined,
-  WarningOutlined,
+  AlertOutlined,
 } from "@ant-design/icons";
 import type { Product } from "../types";
 import { useNavigate } from "react-router-dom";
@@ -26,19 +25,6 @@ const ProductCard: React.FC<ProductCardProps> = ({
   showAllergenWarning = true,
 }) => {
   const navigate = useNavigate();
-
-  const getSeverityColor = (severity: string) => {
-    switch (severity) {
-      case "严重":
-        return { color: "#ff4d4f", bgColor: "#fff1f0", label: "严重" };
-      case "中度":
-        return { color: "#fa8c16", bgColor: "#fff7e6", label: "中度" };
-      case "轻微":
-        return { color: "#faad14", bgColor: "#fffbe6", label: "轻微" };
-      default:
-        return { color: "#8c8c8c", bgColor: "#fafafa", label: "轻微" };
-    }
-  };
 
   const getStatusTag = () => {
     if (product.isBlacklisted) {
@@ -225,7 +211,7 @@ const ProductCard: React.FC<ProductCardProps> = ({
                 }
               >
                 <Tag
-                  icon={<AllergyOutlined />}
+                  icon={<AlertOutlined />}
                   style={{
                     backgroundColor: "#fff1f0",
                     borderColor: "#ffa39e",

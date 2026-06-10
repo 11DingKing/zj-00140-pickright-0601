@@ -22,7 +22,7 @@ import {
   HeartOutlined,
   CheckCircleOutlined,
   ExclamationCircleOutlined,
-  AllergyOutlined,
+  AlertOutlined,
 } from "@ant-design/icons";
 import ProductCard from "../components/ProductCard";
 import { getRecommendations } from "../services/api";
@@ -297,9 +297,7 @@ const RecommendPage: React.FC = () => {
                       <Statistic
                         title="含过敏原警告"
                         value={allergenWarningCount}
-                        prefix={
-                          <AllergyOutlined style={{ color: "#fa8c16" }} />
-                        }
+                        prefix={<AlertOutlined style={{ color: "#fa8c16" }} />}
                         suffix="个"
                         valueStyle={{ color: "#fa8c16" }}
                       />

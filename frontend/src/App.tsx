@@ -9,7 +9,7 @@ import {
   FormOutlined,
   ShoppingOutlined,
   BellOutlined,
-  AllergyOutlined,
+  AlertOutlined,
   BellFilled,
   UserOutlined,
 } from "@ant-design/icons";
@@ -67,7 +67,7 @@ const App: React.FC = () => {
     },
     {
       key: "allergen",
-      icon: <AllergyOutlined />,
+      icon: <AlertOutlined />,
       label: "过敏原设置",
       onClick: () => navigate("/allergen"),
     },
@@ -95,7 +95,7 @@ const App: React.FC = () => {
     },
     {
       key: "allergen",
-      icon: <AllergyOutlined />,
+      icon: <AlertOutlined />,
       label: "过敏原设置",
       onClick: () => navigate("/allergen"),
     },

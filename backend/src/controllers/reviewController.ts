@@ -1,12 +1,11 @@
 import { Request, Response } from "express";
-import { PrismaClient } from "@prisma/client";
+import prisma from "../utils/prisma";
 import {
   shouldReportAllergy,
   calculateTrustIndex,
+  isBlacklistedProduct,
   getTrustLevel,
 } from "../utils/trustIndex";
-
-const prisma = new PrismaClient();
 
 // 创建评价
 export const createReview = async (req: Request, res: Response) => {
@@ -54,7 +53,11 @@ export const createReview = async (req: Request, res: Response) => {
     const productWithRelations = await prisma.product.findUnique({
       where: { id: parseInt(productId) },
       include: {
-        brand: true,
+        brand: {
+          include: {
+            blacklist: true,
+          },
+        },
         reviews: true,
         adverseReactions: true,
         inspectionResults: true,

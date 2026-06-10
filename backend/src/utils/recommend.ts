@@ -5,8 +5,12 @@ import type {
   Brand,
   Blacklist,
   AllergenProfile,
+  Review,
+  AdverseReaction,
+  InspectionResult,
 } from "@prisma/client";
 import { checkProductAllergens, type AllergenMatchResult } from "./allergen";
+import { calculateTrustIndex } from "./trustIndex";
 
 interface RecommendParams {
   childAge: number;
@@ -23,6 +27,9 @@ interface ProductWithBrand extends Product {
     whitelist?: any;
   };
   blacklist: Blacklist | null;
+  reviews: Review[];
+  adverseReactions: AdverseReaction[];
+  inspectionResults: InspectionResult[];
 }
 
 export interface ProductWithAllergenInfo extends ProductWithBrand {
@@ -110,8 +117,9 @@ function calculateMatchScore(
     score += 5;
   }
 
-  // 5. 安全分加成 (权重20%)
-  score += (product.trustIndex / 10) * 20;
+  // 5. 安全分加成 (权重20%) - 使用实时计算的放心指数
+  const calculatedTrustIndex = calculateTrustIndex({ product });
+  score += (calculatedTrustIndex / 10) * 20;
 
   // 6. 白名单品牌加分
   if (product.brand.isWhitelist) {

@@ -41,6 +41,8 @@ export interface Product {
   allergenInfo?: AllergenMatchResult | null;
   isSubscribed?: boolean;
   subscription?: ProductSubscription | null;
+  adverseReactions?: AdverseReaction[];
+  inspectionResults?: InspectionResult[];
 }
 
 export interface ProductDetail extends Product {

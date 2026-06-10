@@ -341,7 +341,11 @@ const inspectionResults = [
 async function main() {
   console.log('🌱 开始播种数据...');
 
-  // 清空现有数据
+  // 清空现有数据（注意删除顺序，避免外键约束）
+  await prisma.notification.deleteMany({});
+  await prisma.productSubscription.deleteMany({});
+  await prisma.allergenProfile.deleteMany({});
+  await prisma.parent.deleteMany({});
   await prisma.review.deleteMany({});
   await prisma.adverseReaction.deleteMany({});
   await prisma.inspectionResult.deleteMany({});
@@ -503,7 +507,11 @@ async function main() {
     const productWithRelations = await prisma.product.findUnique({
       where: { id: product.id },
       include: {
-        brand: true,
+        brand: {
+          include: {
+            blacklist: true,
+          },
+        },
         reviews: true,
         adverseReactions: true,
         inspectionResults: true,
@@ -556,45 +564,48 @@ async function main() {
   }
   console.log(`👨‍👩‍👧 已创建 ${createdParents.length} 个家长用户`);
 
-  // 创建过敏原档案
+  // 创建过敏原档案 - 使用实际创建的家长ID
+  const parentId1 = createdParents[0]?.id;
+  const parentId2 = createdParents[1]?.id;
+  const parentId3 = createdParents[2]?.id;
   const allergenProfiles = [
     {
-      parentId: 1,
+      parentId: parentId1,
       allergenType: "香精",
       allergenName: "日用香精",
       severity: "严重",
       description: "接触后会出现皮肤红肿、瘙痒",
     },
     {
-      parentId: 1,
+      parentId: parentId1,
       allergenType: "着色剂",
       allergenName: "胭脂红",
       severity: "中度",
       description: "使用后唇部会出现轻微刺痛",
     },
     {
-      parentId: 1,
+      parentId: parentId1,
       allergenType: "防腐剂",
       allergenName: "尼泊金酯",
       severity: "轻微",
       description: "长期使用可能导致皮肤干燥",
     },
     {
-      parentId: 2,
+      parentId: parentId2,
       allergenType: "香精",
       allergenName: "草莓香精",
       severity: "严重",
       description: "严重过敏反应，会出现呼吸困难",
     },
     {
-      parentId: 2,
+      parentId: parentId2,
       allergenType: "着色剂",
       allergenName: "日落黄",
       severity: "中度",
       description: "使用后皮肤发红",
     },
     {
-      parentId: 3,
+      parentId: parentId3,
       allergenType: "矿物油",
       allergenName: "液体石蜡",
       severity: "轻微",
@@ -609,56 +620,63 @@ async function main() {
   }
   console.log(`🌿 已创建 ${allergenProfiles.length} 条过敏原档案`);
 
-  // 创建产品订阅 - 选择前3个产品订阅
+  // 创建产品订阅 - 使用实际创建的家长ID和产品ID
   const subscriptions = [
     {
-      parentId: 1,
-      productId: 1,
+      parentId: parentId1,
+      productIndex: 0,
       notifyOnAdverseReaction: true,
       notifyOnInspection: true,
     },
     {
-      parentId: 1,
-      productId: 3,
+      parentId: parentId1,
+      productIndex: 2,
       notifyOnAdverseReaction: true,
       notifyOnInspection: true,
     },
     {
-      parentId: 1,
-      productId: 5,
+      parentId: parentId1,
+      productIndex: 4,
       notifyOnAdverseReaction: true,
       notifyOnInspection: false,
     },
     {
-      parentId: 2,
-      productId: 2,
+      parentId: parentId2,
+      productIndex: 1,
       notifyOnAdverseReaction: true,
       notifyOnInspection: true,
     },
     {
-      parentId: 2,
-      productId: 4,
+      parentId: parentId2,
+      productIndex: 3,
       notifyOnAdverseReaction: true,
       notifyOnInspection: true,
     },
     {
-      parentId: 3,
-      productId: 1,
+      parentId: parentId3,
+      productIndex: 0,
       notifyOnAdverseReaction: true,
       notifyOnInspection: true,
     },
   ];
 
+  const createdSubscriptions: any[] = [];
   for (const sub of subscriptions) {
-    const productIndex = sub.productId - 1;
-    if (productIndex >= 0 && productIndex < createdProducts.length) {
+    if (
+      sub.productIndex >= 0 &&
+      sub.productIndex < createdProducts.length &&
+      sub.parentId
+    ) {
       try {
-        await prisma.productSubscription.create({
+        const s = await prisma.productSubscription.create({
           data: {
-            ...sub,
-            productId: createdProducts[productIndex].id,
+            parentId: sub.parentId,
+            productId: createdProducts[sub.productIndex].id,
+            notifyOnAdverseReaction: sub.notifyOnAdverseReaction,
+            notifyOnInspection: sub.notifyOnInspection,
           },
         });
+        createdSubscriptions.push(s);
       } catch (e) {
         // 忽略重复订阅
       }
