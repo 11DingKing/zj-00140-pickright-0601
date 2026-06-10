@@ -1,12 +1,6 @@
 // 放心指数计算工具
 
-import type {
-  Product,
-  Review,
-  AdverseReaction,
-  InspectionResult,
-  Blacklist,
-} from "@prisma/client";
+import type { Product, Review, AdverseReaction, InspectionResult, Blacklist } from '@prisma/client';
 
 interface CalculateTrustIndexParams {
   product: Product & {
@@ -19,14 +13,10 @@ interface CalculateTrustIndexParams {
 }
 
 // 计算综合放心指数 (0-10分)
-export function calculateTrustIndex({
-  product,
-}: CalculateTrustIndexParams): number {
+export function calculateTrustIndex({ product }: CalculateTrustIndexParams): number {
   // 0. 黑名单一票否决（最高优先级，必须放在最前面）- 同时检查 isActive
-  const isProductBlacklisted =
-    product.blacklist && product.blacklist.isActive !== false;
-  const isBrandBlacklisted =
-    product.brand.blacklist && product.brand.blacklist.isActive !== false;
+  const isProductBlacklisted = product.blacklist && product.blacklist.isActive !== false;
+  const isBrandBlacklisted = product.brand.blacklist && product.brand.blacklist.isActive !== false;
   if (isProductBlacklisted || isBrandBlacklisted) {
     return 0;
   }
@@ -54,7 +44,7 @@ export function calculateTrustIndex({
   }
 
   // 5. 高致敏成分 (权重10%) - 成分越少越好
-  const highAllergens = JSON.parse(product.highAllergenIngredients || "[]");
+  const highAllergens = JSON.parse(product.highAllergenIngredients || '[]');
   if (highAllergens.length === 0) {
     score += 10;
   } else if (highAllergens.length <= 2) {
@@ -68,8 +58,7 @@ export function calculateTrustIndex({
   // 6. 用户评价 (权重10%)
   if (product.reviews.length > 0) {
     const avgRating =
-      product.reviews.reduce((sum, r) => sum + r.rating, 0) /
-      product.reviews.length;
+      product.reviews.reduce((sum, r) => sum + r.rating, 0) / product.reviews.length;
     score += (avgRating / 5) * 10;
 
     // 过敏反馈扣分 - 力度进一步加大，过敏率高直接一票否决
@@ -90,18 +79,14 @@ export function calculateTrustIndex({
 
   // 7. 不良反应通报 - 大幅扣分，有严重不良反应直接接近0分
   if (product.adverseReactions.length > 0) {
-    const severeCount = product.adverseReactions.filter(
-      (r) => r.severity === "严重",
-    ).length;
+    const severeCount = product.adverseReactions.filter((r) => r.severity === '严重').length;
     const normalCount = product.adverseReactions.length - severeCount;
     score -= severeCount * 30;
     score -= normalCount * 15;
   }
 
   // 8. 抽检不合格 - 大幅扣分，有不合格记录直接重罚
-  const failedInspections = product.inspectionResults.filter(
-    (r) => r.result === "不合格",
-  );
+  const failedInspections = product.inspectionResults.filter((r) => r.result === '不合格');
   if (failedInspections.length > 0) {
     score -= failedInspections.length * 35;
   }
@@ -116,10 +101,8 @@ export function isBlacklistedProduct(product: {
   blacklist: { isActive?: boolean } | null;
   brand: { blacklist: { isActive?: boolean } | null };
 }): boolean {
-  const isProductBlacklisted =
-    product.blacklist && product.blacklist.isActive !== false;
-  const isBrandBlacklisted =
-    product.brand.blacklist && product.brand.blacklist.isActive !== false;
+  const isProductBlacklisted = product.blacklist && product.blacklist.isActive !== false;
+  const isBrandBlacklisted = product.brand.blacklist && product.brand.blacklist.isActive !== false;
   return !!(isProductBlacklisted || isBrandBlacklisted);
 }
 
@@ -131,33 +114,33 @@ export function getTrustLevel(trustIndex: number): {
 } {
   if (trustIndex >= 9) {
     return {
-      level: "非常放心",
-      color: "#52c41a",
-      description: "该产品安全可靠，强烈推荐",
+      level: '非常放心',
+      color: '#52c41a',
+      description: '该产品安全可靠，强烈推荐',
     };
   } else if (trustIndex >= 7.5) {
     return {
-      level: "比较放心",
-      color: "#73d13d",
-      description: "该产品整体安全，可放心使用",
+      level: '比较放心',
+      color: '#73d13d',
+      description: '该产品整体安全，可放心使用',
     };
   } else if (trustIndex >= 6) {
     return {
-      level: "谨慎使用",
-      color: "#faad14",
-      description: "该产品存在一定风险，建议谨慎选择",
+      level: '谨慎使用',
+      color: '#faad14',
+      description: '该产品存在一定风险，建议谨慎选择',
     };
   } else if (trustIndex >= 4) {
     return {
-      level: "不推荐",
-      color: "#fa8c16",
-      description: "该产品风险较高，不建议儿童使用",
+      level: '不推荐',
+      color: '#fa8c16',
+      description: '该产品风险较高，不建议儿童使用',
     };
   } else {
     return {
-      level: "危险",
-      color: "#ff4d4f",
-      description: "该产品存在严重安全问题，禁止使用",
+      level: '危险',
+      color: '#ff4d4f',
+      description: '该产品存在严重安全问题，禁止使用',
     };
   }
 }
@@ -165,16 +148,14 @@ export function getTrustLevel(trustIndex: number): {
 // 检查是否需要提示上报过敏
 export function shouldReportAllergy(symptoms: string[]): boolean {
   const severeSymptoms = [
-    "呼吸困难",
-    "喉头水肿",
-    "过敏性休克",
-    "意识丧失",
-    "严重红肿",
-    "大面积皮疹",
-    "水疱",
-    "溃烂",
+    '呼吸困难',
+    '喉头水肿',
+    '过敏性休克',
+    '意识丧失',
+    '严重红肿',
+    '大面积皮疹',
+    '水疱',
+    '溃烂',
   ];
-  return symptoms.some((s) =>
-    severeSymptoms.some((severe) => s.includes(severe)),
-  );
+  return symptoms.some((s) => severeSymptoms.some((severe) => s.includes(severe)));
 }

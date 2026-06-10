@@ -1,10 +1,6 @@
-import { Request, Response } from "express";
-import prisma from "../utils/prisma";
-import {
-  getTrustLevel,
-  calculateTrustIndex,
-  isBlacklistedProduct,
-} from "../utils/trustIndex";
+import { Request, Response } from 'express';
+import prisma from '../utils/prisma';
+import { getTrustLevel, calculateTrustIndex, isBlacklistedProduct } from '../utils/trustIndex';
 
 // 获取白名单（放心榜）
 export const getWhitelist = async (_req: Request, res: Response) => {
@@ -31,7 +27,7 @@ export const getWhitelist = async (_req: Request, res: Response) => {
           },
         },
       },
-      orderBy: { addedAt: "desc" },
+      orderBy: { addedAt: 'desc' },
     });
 
     const result = whitelist.map((item) => ({
@@ -47,10 +43,8 @@ export const getWhitelist = async (_req: Request, res: Response) => {
             });
             return {
               ...p,
-              ingredients: JSON.parse(p.ingredients || "[]"),
-              highAllergenIngredients: JSON.parse(
-                p.highAllergenIngredients || "[]",
-              ),
+              ingredients: JSON.parse(p.ingredients || '[]'),
+              highAllergenIngredients: JSON.parse(p.highAllergenIngredients || '[]'),
               trustIndex: calculatedTrustIndex,
               trustLevel: getTrustLevel(calculatedTrustIndex),
               isBlacklisted: isBlacklistedProduct(p as any),
@@ -65,8 +59,8 @@ export const getWhitelist = async (_req: Request, res: Response) => {
       data: result,
     });
   } catch (error) {
-    console.error("获取白名单失败:", error);
-    res.status(500).json({ error: "获取白名单失败" });
+    console.error('获取白名单失败:', error);
+    res.status(500).json({ error: '获取白名单失败' });
   }
 };
 
@@ -81,7 +75,7 @@ export const getBlacklist = async (_req: Request, res: Response) => {
           include: { brand: true },
         },
       },
-      orderBy: { penaltyDate: "desc" },
+      orderBy: { penaltyDate: 'desc' },
     });
 
     const result = blacklist.map((item) => ({
@@ -89,10 +83,8 @@ export const getBlacklist = async (_req: Request, res: Response) => {
       product: item.product
         ? {
             ...item.product,
-            ingredients: JSON.parse(item.product.ingredients || "[]"),
-            highAllergenIngredients: JSON.parse(
-              item.product.highAllergenIngredients || "[]",
-            ),
+            ingredients: JSON.parse(item.product.ingredients || '[]'),
+            highAllergenIngredients: JSON.parse(item.product.highAllergenIngredients || '[]'),
           }
         : null,
     }));
@@ -102,21 +94,21 @@ export const getBlacklist = async (_req: Request, res: Response) => {
       data: result,
     });
   } catch (error) {
-    console.error("获取黑名单失败:", error);
-    res.status(500).json({ error: "获取黑名单失败" });
+    console.error('获取黑名单失败:', error);
+    res.status(500).json({ error: '获取黑名单失败' });
   }
 };
 
 // 获取放心榜（按放心指数排序的产品榜单）
 export const getTrustRank = async (req: Request, res: Response) => {
   try {
-    const { category, limit = "20" } = req.query;
+    const { category, limit = '20' } = req.query;
 
     const where: any = {
       isRegistered: true,
     };
 
-    if (category && typeof category === "string") {
+    if (category && typeof category === 'string') {
       where.category = category;
     }
 
@@ -138,9 +130,7 @@ export const getTrustRank = async (req: Request, res: Response) => {
     });
 
     // 先过滤掉黑名单产品，再实时计算放心指数，然后排序
-    const validProducts = products.filter(
-      (p) => !isBlacklistedProduct(p as any),
-    );
+    const validProducts = products.filter((p) => !isBlacklistedProduct(p as any));
 
     const productsWithTrustIndex = validProducts.map((product) => {
       const calculatedTrustIndex = calculateTrustIndex({
@@ -154,25 +144,18 @@ export const getTrustRank = async (req: Request, res: Response) => {
     });
 
     // 按实时计算的放心指数降序排序
-    productsWithTrustIndex.sort(
-      (a, b) => b.calculatedTrustIndex - a.calculatedTrustIndex,
-    );
+    productsWithTrustIndex.sort((a, b) => b.calculatedTrustIndex - a.calculatedTrustIndex);
 
     // 取前 N 个
-    const limitedProducts = productsWithTrustIndex.slice(
-      0,
-      parseInt(limit as string),
-    );
+    const limitedProducts = productsWithTrustIndex.slice(0, parseInt(limit as string));
 
     const result = limitedProducts.map((product, index) => {
       const trustLevel = getTrustLevel(product.calculatedTrustIndex);
       return {
         rank: index + 1,
         ...product,
-        ingredients: JSON.parse(product.ingredients || "[]"),
-        highAllergenIngredients: JSON.parse(
-          product.highAllergenIngredients || "[]",
-        ),
+        ingredients: JSON.parse(product.ingredients || '[]'),
+        highAllergenIngredients: JSON.parse(product.highAllergenIngredients || '[]'),
         trustIndex: product.calculatedTrustIndex,
         trustLevel,
         isBlacklisted: false,
@@ -185,7 +168,7 @@ export const getTrustRank = async (req: Request, res: Response) => {
       data: result,
     });
   } catch (error) {
-    console.error("获取放心榜失败:", error);
-    res.status(500).json({ error: "获取放心榜失败" });
+    console.error('获取放心榜失败:', error);
+    res.status(500).json({ error: '获取放心榜失败' });
   }
 };

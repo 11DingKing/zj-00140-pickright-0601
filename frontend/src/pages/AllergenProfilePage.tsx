@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect } from 'react';
 import {
   Card,
   Form,
@@ -16,7 +16,7 @@ import {
   Divider,
   List,
   Alert,
-} from "antd";
+} from 'antd';
 import {
   PlusOutlined,
   DeleteOutlined,
@@ -24,16 +24,16 @@ import {
   WarningOutlined,
   SafetyOutlined,
   AlertOutlined,
-} from "@ant-design/icons";
-import type { AllergenProfile } from "../types";
-import { ALLERGEN_TYPE_OPTIONS, SEVERITY_OPTIONS } from "../types";
+} from '@ant-design/icons';
+import type { AllergenProfile } from '../types';
+import { ALLERGEN_TYPE_OPTIONS, SEVERITY_OPTIONS } from '../types';
 import {
   getAllergenProfiles,
   addAllergenProfile,
   updateAllergenProfile,
   deleteAllergenProfile,
-} from "../services/api";
-import { useParent } from "../context/ParentContext";
+} from '../services/api';
+import { useParent } from '../context/ParentContext';
 
 const { Option } = Select;
 const { TextArea } = Input;
@@ -43,9 +43,7 @@ const AllergenProfilePage: React.FC = () => {
   const [profiles, setProfiles] = useState<AllergenProfile[]>([]);
   const [loading, setLoading] = useState(false);
   const [modalVisible, setModalVisible] = useState(false);
-  const [editingProfile, setEditingProfile] = useState<AllergenProfile | null>(
-    null,
-  );
+  const [editingProfile, setEditingProfile] = useState<AllergenProfile | null>(null);
   const { parent, refreshParent } = useParent();
 
   const loadProfiles = async () => {
@@ -56,7 +54,7 @@ const AllergenProfilePage: React.FC = () => {
         setProfiles(res.data.data);
       }
     } catch (error) {
-      message.error("加载过敏原档案失败");
+      message.error('加载过敏原档案失败');
     } finally {
       setLoading(false);
     }
@@ -72,10 +70,10 @@ const AllergenProfilePage: React.FC = () => {
 
       if (editingProfile) {
         await updateAllergenProfile(editingProfile.id, values);
-        message.success("更新成功");
+        message.success('更新成功');
       } else {
         await addAllergenProfile(values);
-        message.success("添加成功");
+        message.success('添加成功');
       }
 
       setModalVisible(false);
@@ -84,7 +82,7 @@ const AllergenProfilePage: React.FC = () => {
       loadProfiles();
       refreshParent();
     } catch (error: any) {
-      message.error(error.response?.data?.error || "操作失败");
+      message.error(error.response?.data?.error || '操作失败');
     } finally {
       setLoading(false);
     }
@@ -93,11 +91,11 @@ const AllergenProfilePage: React.FC = () => {
   const handleDelete = async (id: number) => {
     try {
       await deleteAllergenProfile(id);
-      message.success("删除成功");
+      message.success('删除成功');
       loadProfiles();
       refreshParent();
     } catch (error) {
-      message.error("删除失败");
+      message.error('删除失败');
     }
   };
 
@@ -115,20 +113,20 @@ const AllergenProfilePage: React.FC = () => {
 
   const getSeverityColor = (severity: string) => {
     switch (severity) {
-      case "严重":
-        return "red";
-      case "中度":
-        return "orange";
-      case "轻微":
-        return "gold";
+      case '严重':
+        return 'red';
+      case '中度':
+        return 'orange';
+      case '轻微':
+        return 'gold';
       default:
-        return "default";
+        return 'default';
     }
   };
 
-  const severeCount = profiles.filter((p) => p.severity === "严重").length;
-  const moderateCount = profiles.filter((p) => p.severity === "中度").length;
-  const mildCount = profiles.filter((p) => p.severity === "轻微").length;
+  const severeCount = profiles.filter((p) => p.severity === '严重').length;
+  const moderateCount = profiles.filter((p) => p.severity === '中度').length;
+  const mildCount = profiles.filter((p) => p.severity === '轻微').length;
 
   return (
     <div style={{ padding: 24 }}>
@@ -155,8 +153,8 @@ const AllergenProfilePage: React.FC = () => {
             <Statistic
               title="严重过敏"
               value={severeCount}
-              prefix={<WarningOutlined style={{ color: "#ff4d4f" }} />}
-              valueStyle={{ color: "#ff4d4f" }}
+              prefix={<WarningOutlined style={{ color: '#ff4d4f' }} />}
+              valueStyle={{ color: '#ff4d4f' }}
             />
           </Card>
         </Col>
@@ -165,8 +163,8 @@ const AllergenProfilePage: React.FC = () => {
             <Statistic
               title="中度过敏"
               value={moderateCount}
-              prefix={<WarningOutlined style={{ color: "#fa8c16" }} />}
-              valueStyle={{ color: "#fa8c16" }}
+              prefix={<WarningOutlined style={{ color: '#fa8c16' }} />}
+              valueStyle={{ color: '#fa8c16' }}
             />
           </Card>
         </Col>
@@ -175,8 +173,8 @@ const AllergenProfilePage: React.FC = () => {
             <Statistic
               title="轻微过敏"
               value={mildCount}
-              prefix={<SafetyOutlined style={{ color: "#faad14" }} />}
-              valueStyle={{ color: "#faad14" }}
+              prefix={<SafetyOutlined style={{ color: '#faad14' }} />}
+              valueStyle={{ color: '#faad14' }}
             />
           </Card>
         </Col>
@@ -191,9 +189,7 @@ const AllergenProfilePage: React.FC = () => {
         }
       >
         {profiles.length === 0 ? (
-          <div
-            style={{ textAlign: "center", padding: "40px 0", color: "#8c8c8c" }}
-          >
+          <div style={{ textAlign: 'center', padding: '40px 0', color: '#8c8c8c' }}>
             <AlertOutlined style={{ fontSize: 48, marginBottom: 16 }} />
             <p>暂无过敏原档案</p>
             <p style={{ fontSize: 12 }}>点击上方按钮添加孩子的过敏原信息</p>
@@ -204,11 +200,7 @@ const AllergenProfilePage: React.FC = () => {
             renderItem={(item) => (
               <List.Item
                 actions={[
-                  <Button
-                    type="link"
-                    icon={<EditOutlined />}
-                    onClick={() => handleEdit(item)}
-                  >
+                  <Button type="link" icon={<EditOutlined />} onClick={() => handleEdit(item)}>
                     编辑
                   </Button>,
                   <Popconfirm
@@ -228,12 +220,10 @@ const AllergenProfilePage: React.FC = () => {
                     <Space>
                       <span>{item.allergenName}</span>
                       <Tag color="blue">{item.allergenType}</Tag>
-                      <Tag color={getSeverityColor(item.severity)}>
-                        {item.severity}
-                      </Tag>
+                      <Tag color={getSeverityColor(item.severity)}>{item.severity}</Tag>
                     </Space>
                   }
-                  description={item.description || "暂无描述"}
+                  description={item.description || '暂无描述'}
                 />
               </List.Item>
             )}
@@ -249,10 +239,7 @@ const AllergenProfilePage: React.FC = () => {
         message="温馨提示"
         description={
           <div>
-            <p>
-              •
-              添加过敏原后，平台会在产品搜索、推荐、详情页面自动检测并给出醒目提醒
-            </p>
+            <p>• 添加过敏原后，平台会在产品搜索、推荐、详情页面自动检测并给出醒目提醒</p>
             <p>• 严重过敏的成分会直接从推荐结果中排除</p>
             <p>• 请务必准确填写过敏原信息，以确保孩子的安全</p>
           </div>
@@ -260,7 +247,7 @@ const AllergenProfilePage: React.FC = () => {
       />
 
       <Modal
-        title={editingProfile ? "编辑过敏原" : "添加过敏原"}
+        title={editingProfile ? '编辑过敏原' : '添加过敏原'}
         open={modalVisible}
         onCancel={() => {
           setModalVisible(false);
@@ -274,12 +261,12 @@ const AllergenProfilePage: React.FC = () => {
           form={form}
           layout="vertical"
           onFinish={handleSubmit}
-          initialValues={{ severity: "轻微" }}
+          initialValues={{ severity: '轻微' }}
         >
           <Form.Item
             name="allergenType"
             label="过敏原类型"
-            rules={[{ required: true, message: "请选择过敏原类型" }]}
+            rules={[{ required: true, message: '请选择过敏原类型' }]}
           >
             <Select placeholder="请选择过敏原类型">
               {ALLERGEN_TYPE_OPTIONS.map((opt) => (
@@ -293,7 +280,7 @@ const AllergenProfilePage: React.FC = () => {
           <Form.Item
             name="allergenName"
             label="过敏原名称"
-            rules={[{ required: true, message: "请输入过敏原名称" }]}
+            rules={[{ required: true, message: '请输入过敏原名称' }]}
           >
             <Input placeholder="例如：香精、人工色素、对羟基苯甲酸酯等" />
           </Form.Item>
@@ -301,7 +288,7 @@ const AllergenProfilePage: React.FC = () => {
           <Form.Item
             name="severity"
             label="严重程度"
-            rules={[{ required: true, message: "请选择严重程度" }]}
+            rules={[{ required: true, message: '请选择严重程度' }]}
           >
             <Select placeholder="请选择严重程度">
               {SEVERITY_OPTIONS.map((opt) => (
@@ -313,13 +300,10 @@ const AllergenProfilePage: React.FC = () => {
           </Form.Item>
 
           <Form.Item name="description" label="过敏反应描述（可选）">
-            <TextArea
-              rows={3}
-              placeholder="描述过敏症状，如：皮肤发红、瘙痒、皮疹等"
-            />
+            <TextArea rows={3} placeholder="描述过敏症状，如：皮肤发红、瘙痒、皮疹等" />
           </Form.Item>
 
-          <Form.Item style={{ marginBottom: 0, textAlign: "right" }}>
+          <Form.Item style={{ marginBottom: 0, textAlign: 'right' }}>
             <Space>
               <Button
                 onClick={() => {
@@ -331,7 +315,7 @@ const AllergenProfilePage: React.FC = () => {
                 取消
               </Button>
               <Button type="primary" htmlType="submit" loading={loading}>
-                {editingProfile ? "更新" : "添加"}
+                {editingProfile ? '更新' : '添加'}
               </Button>
             </Space>
           </Form.Item>

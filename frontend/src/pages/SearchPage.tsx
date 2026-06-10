@@ -68,8 +68,8 @@ const SearchPage: React.FC = () => {
     { label: '天使之梦', value: '天使之梦' },
   ];
 
-  const blacklistedCount = products.filter(p => p.isBlacklisted).length;
-  const unregisteredCount = products.filter(p => !p.isRegistered && !p.isBlacklisted).length;
+  const blacklistedCount = products.filter((p) => p.isBlacklisted).length;
+  const unregisteredCount = products.filter((p) => !p.isRegistered && !p.isBlacklisted).length;
 
   return (
     <div>
@@ -96,7 +96,7 @@ const SearchPage: React.FC = () => {
               onChange={setSelectedCategory}
               size="large"
             >
-              {CATEGORY_OPTIONS.map(opt => (
+              {CATEGORY_OPTIONS.map((opt) => (
                 <Option key={opt.value} value={opt.value}>
                   {opt.label}
                 </Option>
@@ -119,7 +119,7 @@ const SearchPage: React.FC = () => {
             <span style={{ color: 'rgba(255,255,255,0.8)', marginRight: 12, fontSize: 13 }}>
               快捷搜索：
             </span>
-            {quickSearches.map(item => (
+            {quickSearches.map((item) => (
               <Tag
                 key={item.value}
                 onClick={() => {
@@ -142,21 +142,16 @@ const SearchPage: React.FC = () => {
         </Space>
       </Card>
 
-      {error && (
-        <Alert
-          type="error"
-          message={error}
-          showIcon
-          style={{ marginBottom: 24 }}
-        />
-      )}
+      {error && <Alert type="error" message={error} showIcon style={{ marginBottom: 24 }} />}
 
       {searched && products.length > 0 && (
         <Alert
           type={blacklistedCount > 0 ? 'warning' : 'success'}
           message={
             <Space>
-              <span>找到 <strong>{products.length}</strong> 个相关产品</span>
+              <span>
+                找到 <strong>{products.length}</strong> 个相关产品
+              </span>
               {blacklistedCount > 0 && (
                 <Tag color="red" icon={<WarningOutlined />}>
                   {blacklistedCount} 个黑名单产品
@@ -180,13 +175,14 @@ const SearchPage: React.FC = () => {
             <SafetyOutlined style={{ fontSize: 64, color: '#52c41a', marginBottom: 16 }} />
             <h3 style={{ marginBottom: 8 }}>帮家长擦亮眼睛</h3>
             <p>
-              输入产品名称、品牌或备案号开始查询<br />
+              输入产品名称、品牌或备案号开始查询
+              <br />
               支持扫备案号查询，快速识别三无产品和问题产品
             </p>
           </div>
         ) : products.length > 0 ? (
           <div>
-            {products.map(product => (
+            {products.map((product) => (
               <ProductCard key={product.id} product={product} />
             ))}
           </div>
@@ -195,7 +191,8 @@ const SearchPage: React.FC = () => {
             <Empty
               description={
                 <span>
-                  未找到相关产品<br />
+                  未找到相关产品
+                  <br />
                   <span style={{ color: '#8c8c8c', fontSize: 13 }}>
                     可能未在监管部门备案，请谨慎购买
                   </span>

@@ -16,7 +16,7 @@ app.get('/health', (_req, res) => {
   res.json({
     status: 'ok',
     message: '儿童彩妆选购助手平台后端服务运行正常',
-    timestamp: new Date().toISOString()
+    timestamp: new Date().toISOString(),
   });
 });
 
@@ -24,7 +24,7 @@ app.get('/health', (_req, res) => {
 app.use((_req, res) => {
   res.status(404).json({
     error: '接口不存在',
-    code: 404
+    code: 404,
   });
 });
 
@@ -34,7 +34,7 @@ app.use((err: Error, _req: express.Request, res: express.Response) => {
   res.status(500).json({
     error: '服务器内部错误',
     message: err.message,
-    code: 500
+    code: 500,
   });
 });
 

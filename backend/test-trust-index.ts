@@ -27,17 +27,23 @@ async function testTrustIndexCalculation() {
     const trustLevel = getTrustLevel(calculatedTrustIndex);
     const isBlacklisted = !!product.blacklist || !!product.brand.blacklist;
     const hasAdverseReactions = product.adverseReactions.length > 0;
-    const hasFailedInspections = product.inspectionResults.some(r => r.result === '不合格');
-    const hasAllergyReviews = product.reviews.some(r => r.hasAllergy);
+    const hasFailedInspections = product.inspectionResults.some((r) => r.result === '不合格');
+    const hasAllergyReviews = product.reviews.some((r) => r.hasAllergy);
 
     console.log(`\n📦 产品: ${product.name}`);
     console.log(`   备案号: ${product.recordNumber}`);
     console.log(`   品牌: ${product.brand.name}`);
     console.log(`   黑名单: ${isBlacklisted ? '❌ 是' : '✅ 否'}`);
     console.log(`   基础安全分: ${product.safetyScore}`);
-    console.log(`   不良反应通报: ${hasAdverseReactions ? `⚠️ ${product.adverseReactions.length}条` : '✅ 无'}`);
-    console.log(`   抽检不合格: ${hasFailedInspections ? `❌ ${product.inspectionResults.filter(r => r.result === '不合格').length}次` : '✅ 无'}`);
-    console.log(`   过敏反馈: ${hasAllergyReviews ? `⚠️ ${product.reviews.filter(r => r.hasAllergy).length}条` : '✅ 无'}`);
+    console.log(
+      `   不良反应通报: ${hasAdverseReactions ? `⚠️ ${product.adverseReactions.length}条` : '✅ 无'}`,
+    );
+    console.log(
+      `   抽检不合格: ${hasFailedInspections ? `❌ ${product.inspectionResults.filter((r) => r.result === '不合格').length}次` : '✅ 无'}`,
+    );
+    console.log(
+      `   过敏反馈: ${hasAllergyReviews ? `⚠️ ${product.reviews.filter((r) => r.hasAllergy).length}条` : '✅ 无'}`,
+    );
     console.log(`   计算放心指数: ${calculatedTrustIndex.toFixed(1)}`);
     console.log(`   放心等级: ${trustLevel.level} (${trustLevel.color})`);
     console.log(`   描述: ${trustLevel.description}`);

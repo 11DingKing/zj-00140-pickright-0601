@@ -1,11 +1,7 @@
-import { Request, Response } from "express";
-import prisma from "../utils/prisma";
-import { getRecommendations } from "../utils/recommend";
-import {
-  getTrustLevel,
-  calculateTrustIndex,
-  isBlacklistedProduct,
-} from "../utils/trustIndex";
+import { Request, Response } from 'express';
+import prisma from '../utils/prisma';
+import { getRecommendations } from '../utils/recommend';
+import { getTrustLevel, calculateTrustIndex, isBlacklistedProduct } from '../utils/trustIndex';
 
 // 获取推荐产品
 export const getRecommendedProducts = async (req: Request, res: Response) => {
@@ -37,10 +33,10 @@ export const getRecommendedProducts = async (req: Request, res: Response) => {
       return res.status(400).json({ error: '请选择有效的肤质类型' });
     }
 
-    const parentId = parseInt(req.headers["x-parent-id"] as string) || 1;
+    const parentId = parseInt(req.headers['x-parent-id'] as string) || 1;
 
     let allergenProfiles: any[] = [];
-    if (usePersonalization !== false && usePersonalization !== "false") {
+    if (usePersonalization !== false && usePersonalization !== 'false') {
       allergenProfiles = await prisma.allergenProfile.findMany({
         where: { parentId },
       });
@@ -74,11 +70,10 @@ export const getRecommendedProducts = async (req: Request, res: Response) => {
       childAge: age,
       skinType,
       category: category || undefined,
-      excludeHighAllergen:
-        excludeHighAllergen === true || excludeHighAllergen === "true",
+      excludeHighAllergen: excludeHighAllergen === true || excludeHighAllergen === 'true',
       allergenProfiles,
       excludeAllergenProducts:
-        excludeAllergenProducts === true || excludeAllergenProducts === "true",
+        excludeAllergenProducts === true || excludeAllergenProducts === 'true',
     });
 
     // 统计过滤信息
@@ -95,10 +90,8 @@ export const getRecommendedProducts = async (req: Request, res: Response) => {
       });
       return {
         ...item.product,
-        ingredients: JSON.parse(item.product.ingredients || "[]"),
-        highAllergenIngredients: JSON.parse(
-          item.product.highAllergenIngredients || "[]",
-        ),
+        ingredients: JSON.parse(item.product.ingredients || '[]'),
+        highAllergenIngredients: JSON.parse(item.product.highAllergenIngredients || '[]'),
         trustIndex: calculatedTrustIndex,
         trustLevel: getTrustLevel(calculatedTrustIndex),
         isBlacklisted: isBlacklistedProduct(item.product as any),
@@ -115,13 +108,10 @@ export const getRecommendedProducts = async (req: Request, res: Response) => {
         childAge: age,
         skinType,
         category: category || null,
-        excludeHighAllergen:
-          excludeHighAllergen === true || excludeHighAllergen === "true",
+        excludeHighAllergen: excludeHighAllergen === true || excludeHighAllergen === 'true',
         excludeAllergenProducts:
-          excludeAllergenProducts === true ||
-          excludeAllergenProducts === "true",
-        usePersonalization:
-          usePersonalization !== false && usePersonalization !== "false",
+          excludeAllergenProducts === true || excludeAllergenProducts === 'true',
+        usePersonalization: usePersonalization !== false && usePersonalization !== 'false',
       },
       stats: {
         totalProducts,

@@ -18,18 +18,13 @@ import {
 import {
   BellOutlined,
   WarningOutlined,
-  SafetyOutlined,
   EyeOutlined,
   StopOutlined,
   CheckCircleOutlined,
   ExclamationCircleOutlined,
 } from '@ant-design/icons';
 import type { ProductSubscription } from '../types';
-import {
-  getSubscriptions,
-  cancelSubscription,
-  updateSubscription,
-} from '../services/api';
+import { getSubscriptions, cancelSubscription, updateSubscription } from '../services/api';
 import { useNavigate } from 'react-router-dom';
 import { useParent } from '../context/ParentContext';
 
@@ -71,7 +66,7 @@ const SubscriptionPage: React.FC = () => {
   const handleToggleNotify = async (
     id: number,
     field: 'notifyOnAdverseReaction' | 'notifyOnInspection',
-    checked: boolean
+    checked: boolean,
   ) => {
     try {
       await updateSubscription(id, { [field]: checked });
@@ -84,24 +79,24 @@ const SubscriptionPage: React.FC = () => {
 
   const getCategoryEmoji = (category: string) => {
     const emojiMap: Record<string, string> = {
-      '口红': '💄',
-      '眼影': '👁️',
-      '腮红': '🎀',
-      '粉底': '✨',
-      '眼线': '🖌️',
-      '指甲油': '💅',
-      '唇彩': '💋',
-      '套装': '🎁',
+      口红: '💄',
+      眼影: '👁️',
+      腮红: '🎀',
+      粉底: '✨',
+      眼线: '🖌️',
+      指甲油: '💅',
+      唇彩: '💋',
+      套装: '🎁',
     };
     return emojiMap[category] || '🎨';
   };
 
   const hasAdverseReactionCount = subscriptions.filter(
-    s => s.product?.adverseReactions && s.product.adverseReactions.length > 0
+    (s) => s.product?.adverseReactions && s.product.adverseReactions.length > 0,
   ).length;
 
-  const hasInspectionIssueCount = subscriptions.filter(
-    s => s.product?.inspectionResults?.some((r: any) => r.result === '不合格')
+  const hasInspectionIssueCount = subscriptions.filter((s) =>
+    s.product?.inspectionResults?.some((r: any) => r.result === '不合格'),
   ).length;
 
   return (
@@ -161,10 +156,7 @@ const SubscriptionPage: React.FC = () => {
         style={{ marginBottom: 24 }}
       />
 
-      <Card
-        title="订阅列表"
-        loading={loading}
-      >
+      <Card title="订阅列表" loading={loading}>
         {subscriptions.length === 0 ? (
           <Empty
             description={
@@ -181,9 +173,12 @@ const SubscriptionPage: React.FC = () => {
             dataSource={subscriptions}
             renderItem={(item) => {
               const product = item.product;
-              const hasAdverseReaction = product?.adverseReactions && product.adverseReactions.length > 0;
-              const hasInspectionFailed = product?.inspectionResults?.some((r: any) => r.result === '不合格');
-              
+              const hasAdverseReaction =
+                product?.adverseReactions && product.adverseReactions.length > 0;
+              const hasInspectionFailed = product?.inspectionResults?.some(
+                (r: any) => r.result === '不合格',
+              );
+
               return (
                 <List.Item
                   actions={[
@@ -208,9 +203,7 @@ const SubscriptionPage: React.FC = () => {
                 >
                   <List.Item.Meta
                     avatar={
-                      <span style={{ fontSize: 32 }}>
-                        {getCategoryEmoji(product.category)}
-                      </span>
+                      <span style={{ fontSize: 32 }}>{getCategoryEmoji(product.category)}</span>
                     }
                     title={
                       <Space>
@@ -239,7 +232,8 @@ const SubscriptionPage: React.FC = () => {
                     description={
                       <div>
                         <div style={{ marginBottom: 8, color: '#8c8c8c' }}>
-                          {product.brand.name} · {product.category} · 适用年龄 {product.minAge}-{product.maxAge}岁
+                          {product.brand.name} · {product.category} · 适用年龄 {product.minAge}-
+                          {product.maxAge}岁
                         </div>
                         <Space size="large">
                           <Space>

@@ -1,13 +1,4 @@
-import { PrismaClient } from '@prisma/client';
-
-const prisma = new PrismaClient();
-
-// 高致敏成分列表
-const HIGH_ALLERGENS = [
-  '香精', '防腐剂', '羊毛脂', '酒精', '香料',
-  '对羟基苯甲酸酯', '甲醛释放体', '异噻唑啉酮',
-  '人工色素', '矿物油', '棕榈酸', '硬脂酸'
-];
+import prisma from './utils/prisma';
 
 // 品牌数据
 const brands = [
@@ -52,7 +43,7 @@ const brands = [
     creditCode: '91XXXXXXXXX123456',
     isWhitelist: false,
     description: '曾多次被抽检不合格',
-  }
+  },
 ];
 
 // 产品数据
@@ -71,7 +62,7 @@ const products = [
     safetyScore: 95,
     trustIndex: 9.2,
     specification: '3g',
-    shelfLife: '3年'
+    shelfLife: '3年',
   },
   {
     name: '童年色彩儿童眼影盘-梦幻粉',
@@ -86,7 +77,7 @@ const products = [
     safetyScore: 92,
     trustIndex: 9.0,
     specification: '6色x1g',
-    shelfLife: '3年'
+    shelfLife: '3年',
   },
   {
     name: '童年色彩儿童腮红-蜜桃粉',
@@ -101,7 +92,7 @@ const products = [
     safetyScore: 93,
     trustIndex: 9.1,
     specification: '5g',
-    shelfLife: '3年'
+    shelfLife: '3年',
   },
   // 天使之梦 - 白名单品牌产品
   {
@@ -117,7 +108,7 @@ const products = [
     safetyScore: 88,
     trustIndex: 8.2,
     specification: '3.5g',
-    shelfLife: '3年'
+    shelfLife: '3年',
   },
   {
     name: '天使之梦儿童指甲油套装',
@@ -132,7 +123,7 @@ const products = [
     safetyScore: 90,
     trustIndex: 8.5,
     specification: '6色x5ml',
-    shelfLife: '2年'
+    shelfLife: '2年',
   },
   {
     name: '天使之梦儿童彩妆礼盒套装',
@@ -147,7 +138,7 @@ const products = [
     safetyScore: 82,
     trustIndex: 7.6,
     specification: '12件套',
-    shelfLife: '3年'
+    shelfLife: '3年',
   },
   // 小画家 - 白名单品牌产品
   {
@@ -163,7 +154,7 @@ const products = [
     safetyScore: 94,
     trustIndex: 9.3,
     specification: '15g',
-    shelfLife: '3年'
+    shelfLife: '3年',
   },
   {
     name: '小画家儿童眼线笔',
@@ -178,7 +169,7 @@ const products = [
     safetyScore: 91,
     trustIndex: 8.9,
     specification: '0.5g',
-    shelfLife: '3年'
+    shelfLife: '3年',
   },
   // 彩虹公主 - 普通品牌
   {
@@ -194,7 +185,7 @@ const products = [
     safetyScore: 65,
     trustIndex: 5.2,
     specification: '3g',
-    shelfLife: '3年'
+    shelfLife: '3年',
   },
   {
     name: '彩虹公主儿童眼影',
@@ -209,7 +200,7 @@ const products = [
     safetyScore: 58,
     trustIndex: 4.5,
     specification: '8色x1g',
-    shelfLife: '3年'
+    shelfLife: '3年',
   },
   // 梦幻星 - 普通品牌
   {
@@ -225,7 +216,7 @@ const products = [
     safetyScore: 70,
     trustIndex: 5.8,
     specification: '6色x2g',
-    shelfLife: '3年'
+    shelfLife: '3年',
   },
   {
     name: '梦幻星儿童唇彩套装',
@@ -240,7 +231,7 @@ const products = [
     safetyScore: 62,
     trustIndex: 4.8,
     specification: '4色x3ml',
-    shelfLife: '3年'
+    shelfLife: '3年',
   },
   // 黑名单产品（未在册或问题产品）
   {
@@ -256,7 +247,7 @@ const products = [
     safetyScore: 10,
     trustIndex: 0,
     specification: '8件套',
-    shelfLife: '未知'
+    shelfLife: '未知',
   },
   {
     name: '问题品牌儿童眼影',
@@ -271,7 +262,7 @@ const products = [
     safetyScore: 30,
     trustIndex: 0,
     specification: '12色x1g',
-    shelfLife: '3年'
+    shelfLife: '3年',
   },
   {
     name: '问题品牌儿童指甲油',
@@ -286,56 +277,358 @@ const products = [
     safetyScore: 25,
     trustIndex: 0,
     specification: '6色x5ml',
-    shelfLife: '3年'
-  }
+    shelfLife: '3年',
+  },
 ];
 
 // 示例评价数据
 const reviews = [
-  { productId: 1, childAge: 5, skinType: 'normal', rating: 5, content: '颜色很漂亮，孩子很喜欢，用了没有过敏，成分安全，推荐！', hasAllergy: false, allergySymptoms: null, usageDuration: '1个月' },
-  { productId: 1, childAge: 4, skinType: 'sensitive', rating: 5, content: '敏感肌宝宝用了完全没问题，颜色自然，成分很安全。', hasAllergy: false, allergySymptoms: null, usageDuration: '2周' },
-  { productId: 1, childAge: 6, skinType: 'normal', rating: 4, content: '颜色好看，但是持久度一般，不过安全最重要。', hasAllergy: false, allergySymptoms: null, usageDuration: '3周' },
-  { productId: 2, childAge: 7, skinType: 'normal', rating: 5, content: '舞台表演用的，颜色很正，容易上色，卸妆也方便。', hasAllergy: false, allergySymptoms: null, usageDuration: '1个月' },
-  { productId: 2, childAge: 8, skinType: 'sensitive', rating: 5, content: '敏感肌用着没问题，颜色很漂亮。', hasAllergy: false, allergySymptoms: null, usageDuration: '2个月' },
-  { productId: 4, childAge: 6, skinType: 'dry', rating: 4, content: '挺滋润的，有一点点香味，孩子用了没问题。', hasAllergy: false, allergySymptoms: null, usageDuration: '1个月' },
-  { productId: 4, childAge: 5, skinType: 'sensitive', rating: 3, content: '颜色好看，但是有香味，敏感肌有点担心，用了一次没过敏。', hasAllergy: false, allergySymptoms: null, usageDuration: '1周' },
-  { productId: 5, childAge: 8, skinType: 'normal', rating: 5, content: '水性指甲油，没有气味，孩子很喜欢，容易撕掉不伤指甲。', hasAllergy: false, allergySymptoms: null, usageDuration: '2个月' },
-  { productId: 7, childAge: 10, skinType: 'oily', rating: 5, content: '舞台表演专用，控油效果不错，卸妆也干净。', hasAllergy: false, allergySymptoms: null, usageDuration: '3个月' },
-  { productId: 7, childAge: 12, skinType: 'normal', rating: 5, content: '粉质细腻，不容易脱妆，很好用。', hasAllergy: false, allergySymptoms: null, usageDuration: '1个月' },
-  { productId: 9, childAge: 4, skinType: 'sensitive', rating: 2, content: '用了之后嘴唇周围发红，有点痒，停用后好了。', hasAllergy: true, allergySymptoms: ['发红', '瘙痒'], usageDuration: '1天' },
-  { productId: 10, childAge: 6, skinType: 'normal', rating: 1, content: '孩子用了之后眼部周围红肿，还起了小疹子，非常不好！', hasAllergy: true, allergySymptoms: ['红肿', '皮疹', '瘙痒'], usageDuration: '1次' },
-  { productId: 12, childAge: 5, skinType: 'normal', rating: 2, content: '香味太浓了，孩子用了说嘴唇有点痒，不敢再用了。', hasAllergy: true, allergySymptoms: ['瘙痒'], usageDuration: '2天' },
-  { productId: 3, childAge: 5, skinType: 'normal', rating: 5, content: '颜色很自然，孩子表演用刚刚好，成分安全放心。', hasAllergy: false, allergySymptoms: null, usageDuration: '2周' },
-  { productId: 8, childAge: 10, skinType: 'normal', rating: 4, content: '容易上色，也不晕染，挺好的。', hasAllergy: false, allergySymptoms: null, usageDuration: '1个月' },
-  { productId: 1, childAge: 3, skinType: 'sensitive', rating: 5, content: '三岁宝宝用了没问题，成分很安全。', hasAllergy: false, allergySymptoms: null, usageDuration: '1个月' },
-  { productId: 6, childAge: 7, skinType: 'normal', rating: 3, content: '套装东西很多，但是香味有点重，孩子用了一次没过敏。', hasAllergy: false, allergySymptoms: null, usageDuration: '1周' },
-  { productId: 11, childAge: 9, skinType: 'sensitive', rating: 2, content: '亮片很漂亮，但是用了之后皮肤有点痒，不敢再用了。', hasAllergy: true, allergySymptoms: ['瘙痒', '轻微红肿'], usageDuration: '3天' },
-  { productId: 2, childAge: 6, skinType: 'dry', rating: 4, content: '颜色好看，就是有点飞粉，不过成分还是安全的。', hasAllergy: false, allergySymptoms: null, usageDuration: '3周' },
-  { productId: 5, childAge: 10, skinType: 'normal', rating: 5, content: '没有刺鼻气味，颜色好看，孩子很喜欢！', hasAllergy: false, allergySymptoms: null, usageDuration: '1个月' },
-  { productId: 7, childAge: 11, skinType: 'sensitive', rating: 5, content: '敏感肌的孩子用着很好，没有任何不适。', hasAllergy: false, allergySymptoms: null, usageDuration: '2个月' },
-  { productId: 9, childAge: 7, skinType: 'normal', rating: 1, content: '用了之后孩子嘴唇肿了，还很痒，去医院看了说是接触性皮炎！', hasAllergy: true, allergySymptoms: ['严重红肿', '瘙痒', '皮疹'], usageDuration: '1次' },
-  { productId: 3, childAge: 4, skinType: 'dry', rating: 5, content: '颜色自然，成分安全，孩子用着很好。', hasAllergy: false, allergySymptoms: null, usageDuration: '1个月' },
-  { productId: 4, childAge: 8, skinType: 'oily', rating: 4, content: '挺滋润的，颜色也好看。', hasAllergy: false, allergySymptoms: null, usageDuration: '3周' },
-  { productId: 10, childAge: 5, skinType: 'sensitive', rating: 1, content: '用了之后孩子眼睛周围起了好多小疹子，还很痒，太可怕了！', hasAllergy: true, allergySymptoms: ['大面积皮疹', '严重红肿', '瘙痒'], usageDuration: '1次' },
+  {
+    productId: 1,
+    childAge: 5,
+    skinType: 'normal',
+    rating: 5,
+    content: '颜色很漂亮，孩子很喜欢，用了没有过敏，成分安全，推荐！',
+    hasAllergy: false,
+    allergySymptoms: null,
+    usageDuration: '1个月',
+  },
+  {
+    productId: 1,
+    childAge: 4,
+    skinType: 'sensitive',
+    rating: 5,
+    content: '敏感肌宝宝用了完全没问题，颜色自然，成分很安全。',
+    hasAllergy: false,
+    allergySymptoms: null,
+    usageDuration: '2周',
+  },
+  {
+    productId: 1,
+    childAge: 6,
+    skinType: 'normal',
+    rating: 4,
+    content: '颜色好看，但是持久度一般，不过安全最重要。',
+    hasAllergy: false,
+    allergySymptoms: null,
+    usageDuration: '3周',
+  },
+  {
+    productId: 2,
+    childAge: 7,
+    skinType: 'normal',
+    rating: 5,
+    content: '舞台表演用的，颜色很正，容易上色，卸妆也方便。',
+    hasAllergy: false,
+    allergySymptoms: null,
+    usageDuration: '1个月',
+  },
+  {
+    productId: 2,
+    childAge: 8,
+    skinType: 'sensitive',
+    rating: 5,
+    content: '敏感肌用着没问题，颜色很漂亮。',
+    hasAllergy: false,
+    allergySymptoms: null,
+    usageDuration: '2个月',
+  },
+  {
+    productId: 4,
+    childAge: 6,
+    skinType: 'dry',
+    rating: 4,
+    content: '挺滋润的，有一点点香味，孩子用了没问题。',
+    hasAllergy: false,
+    allergySymptoms: null,
+    usageDuration: '1个月',
+  },
+  {
+    productId: 4,
+    childAge: 5,
+    skinType: 'sensitive',
+    rating: 3,
+    content: '颜色好看，但是有香味，敏感肌有点担心，用了一次没过敏。',
+    hasAllergy: false,
+    allergySymptoms: null,
+    usageDuration: '1周',
+  },
+  {
+    productId: 5,
+    childAge: 8,
+    skinType: 'normal',
+    rating: 5,
+    content: '水性指甲油，没有气味，孩子很喜欢，容易撕掉不伤指甲。',
+    hasAllergy: false,
+    allergySymptoms: null,
+    usageDuration: '2个月',
+  },
+  {
+    productId: 7,
+    childAge: 10,
+    skinType: 'oily',
+    rating: 5,
+    content: '舞台表演专用，控油效果不错，卸妆也干净。',
+    hasAllergy: false,
+    allergySymptoms: null,
+    usageDuration: '3个月',
+  },
+  {
+    productId: 7,
+    childAge: 12,
+    skinType: 'normal',
+    rating: 5,
+    content: '粉质细腻，不容易脱妆，很好用。',
+    hasAllergy: false,
+    allergySymptoms: null,
+    usageDuration: '1个月',
+  },
+  {
+    productId: 9,
+    childAge: 4,
+    skinType: 'sensitive',
+    rating: 2,
+    content: '用了之后嘴唇周围发红，有点痒，停用后好了。',
+    hasAllergy: true,
+    allergySymptoms: ['发红', '瘙痒'],
+    usageDuration: '1天',
+  },
+  {
+    productId: 10,
+    childAge: 6,
+    skinType: 'normal',
+    rating: 1,
+    content: '孩子用了之后眼部周围红肿，还起了小疹子，非常不好！',
+    hasAllergy: true,
+    allergySymptoms: ['红肿', '皮疹', '瘙痒'],
+    usageDuration: '1次',
+  },
+  {
+    productId: 12,
+    childAge: 5,
+    skinType: 'normal',
+    rating: 2,
+    content: '香味太浓了，孩子用了说嘴唇有点痒，不敢再用了。',
+    hasAllergy: true,
+    allergySymptoms: ['瘙痒'],
+    usageDuration: '2天',
+  },
+  {
+    productId: 3,
+    childAge: 5,
+    skinType: 'normal',
+    rating: 5,
+    content: '颜色很自然，孩子表演用刚刚好，成分安全放心。',
+    hasAllergy: false,
+    allergySymptoms: null,
+    usageDuration: '2周',
+  },
+  {
+    productId: 8,
+    childAge: 10,
+    skinType: 'normal',
+    rating: 4,
+    content: '容易上色，也不晕染，挺好的。',
+    hasAllergy: false,
+    allergySymptoms: null,
+    usageDuration: '1个月',
+  },
+  {
+    productId: 1,
+    childAge: 3,
+    skinType: 'sensitive',
+    rating: 5,
+    content: '三岁宝宝用了没问题，成分很安全。',
+    hasAllergy: false,
+    allergySymptoms: null,
+    usageDuration: '1个月',
+  },
+  {
+    productId: 6,
+    childAge: 7,
+    skinType: 'normal',
+    rating: 3,
+    content: '套装东西很多，但是香味有点重，孩子用了一次没过敏。',
+    hasAllergy: false,
+    allergySymptoms: null,
+    usageDuration: '1周',
+  },
+  {
+    productId: 11,
+    childAge: 9,
+    skinType: 'sensitive',
+    rating: 2,
+    content: '亮片很漂亮，但是用了之后皮肤有点痒，不敢再用了。',
+    hasAllergy: true,
+    allergySymptoms: ['瘙痒', '轻微红肿'],
+    usageDuration: '3天',
+  },
+  {
+    productId: 2,
+    childAge: 6,
+    skinType: 'dry',
+    rating: 4,
+    content: '颜色好看，就是有点飞粉，不过成分还是安全的。',
+    hasAllergy: false,
+    allergySymptoms: null,
+    usageDuration: '3周',
+  },
+  {
+    productId: 5,
+    childAge: 10,
+    skinType: 'normal',
+    rating: 5,
+    content: '没有刺鼻气味，颜色好看，孩子很喜欢！',
+    hasAllergy: false,
+    allergySymptoms: null,
+    usageDuration: '1个月',
+  },
+  {
+    productId: 7,
+    childAge: 11,
+    skinType: 'sensitive',
+    rating: 5,
+    content: '敏感肌的孩子用着很好，没有任何不适。',
+    hasAllergy: false,
+    allergySymptoms: null,
+    usageDuration: '2个月',
+  },
+  {
+    productId: 9,
+    childAge: 7,
+    skinType: 'normal',
+    rating: 1,
+    content: '用了之后孩子嘴唇肿了，还很痒，去医院看了说是接触性皮炎！',
+    hasAllergy: true,
+    allergySymptoms: ['严重红肿', '瘙痒', '皮疹'],
+    usageDuration: '1次',
+  },
+  {
+    productId: 3,
+    childAge: 4,
+    skinType: 'dry',
+    rating: 5,
+    content: '颜色自然，成分安全，孩子用着很好。',
+    hasAllergy: false,
+    allergySymptoms: null,
+    usageDuration: '1个月',
+  },
+  {
+    productId: 4,
+    childAge: 8,
+    skinType: 'oily',
+    rating: 4,
+    content: '挺滋润的，颜色也好看。',
+    hasAllergy: false,
+    allergySymptoms: null,
+    usageDuration: '3周',
+  },
+  {
+    productId: 10,
+    childAge: 5,
+    skinType: 'sensitive',
+    rating: 1,
+    content: '用了之后孩子眼睛周围起了好多小疹子，还很痒，太可怕了！',
+    hasAllergy: true,
+    allergySymptoms: ['大面积皮疹', '严重红肿', '瘙痒'],
+    usageDuration: '1次',
+  },
 ];
 
 // 不良反应通报
 const adverseReactions = [
-  { productId: 9, title: '关于某品牌儿童口红过敏反应通报', description: '多名消费者反映使用该产品后出现嘴唇红肿、瘙痒等过敏症状', reportDate: new Date('2024-03-15'), source: '国家药监局', severity: '严重' },
-  { productId: 10, title: '某品牌儿童眼影抽检不合格', description: '检出禁用成分超标，可能导致皮肤过敏', reportDate: new Date('2024-02-20'), source: '广东省药监局', severity: '严重' },
-  { productId: 12, title: '某品牌儿童唇彩过敏反应通报', description: '部分消费者反映使用后出现嘴唇不适', reportDate: new Date('2024-04-10'), source: '浙江省药监局', severity: '一般' },
+  {
+    productId: 9,
+    title: '关于某品牌儿童口红过敏反应通报',
+    description: '多名消费者反映使用该产品后出现嘴唇红肿、瘙痒等过敏症状',
+    reportDate: new Date('2024-03-15'),
+    source: '国家药监局',
+    severity: '严重',
+  },
+  {
+    productId: 10,
+    title: '某品牌儿童眼影抽检不合格',
+    description: '检出禁用成分超标，可能导致皮肤过敏',
+    reportDate: new Date('2024-02-20'),
+    source: '广东省药监局',
+    severity: '严重',
+  },
+  {
+    productId: 12,
+    title: '某品牌儿童唇彩过敏反应通报',
+    description: '部分消费者反映使用后出现嘴唇不适',
+    reportDate: new Date('2024-04-10'),
+    source: '浙江省药监局',
+    severity: '一般',
+  },
 ];
 
 // 抽检结果
 const inspectionResults = [
-  { productId: 9, inspectionOrg: '广东省药品检验所', inspectionDate: new Date('2024-02-01'), result: '不合格', unqualifiedItems: '检出禁用色素、防腐剂超标', source: '广东省药监局' },
-  { productId: 10, inspectionOrg: '上海市药品检验所', inspectionDate: new Date('2024-01-15'), result: '不合格', unqualifiedItems: '重金属超标、禁用防腐剂', source: '上海市监局' },
-  { productId: 13, inspectionOrg: '浙江省药品检验所', inspectionDate: new Date('2024-03-20'), result: '不合格', unqualifiedItems: '无备案、成分不明', source: '浙江省药监局' },
-  { productId: 14, inspectionOrg: '北京市药品检验所', inspectionDate: new Date('2024-03-05'), result: '不合格', unqualifiedItems: '甲醛释放体超标', source: '北京市监局' },
-  { productId: 15, inspectionOrg: '江苏省药品检验所', inspectionDate: new Date('2024-02-28'), result: '不合格', unqualifiedItems: '邻苯二甲酸酯超标', source: '江苏省药监局' },
-  { productId: 1, inspectionOrg: '广东省药品检验所', inspectionDate: new Date('2024-04-01'), result: '合格', unqualifiedItems: null, source: '广东省药监局' },
-  { productId: 2, inspectionOrg: '上海市药品检验所', inspectionDate: new Date('2024-04-02'), result: '合格', unqualifiedItems: null, source: '上海市监局' },
-  { productId: 7, inspectionOrg: '浙江省药品检验所', inspectionDate: new Date('2024-04-03'), result: '合格', unqualifiedItems: null, source: '浙江省药监局' },
+  {
+    productId: 9,
+    inspectionOrg: '广东省药品检验所',
+    inspectionDate: new Date('2024-02-01'),
+    result: '不合格',
+    unqualifiedItems: '检出禁用色素、防腐剂超标',
+    source: '广东省药监局',
+  },
+  {
+    productId: 10,
+    inspectionOrg: '上海市药品检验所',
+    inspectionDate: new Date('2024-01-15'),
+    result: '不合格',
+    unqualifiedItems: '重金属超标、禁用防腐剂',
+    source: '上海市监局',
+  },
+  {
+    productId: 13,
+    inspectionOrg: '浙江省药品检验所',
+    inspectionDate: new Date('2024-03-20'),
+    result: '不合格',
+    unqualifiedItems: '无备案、成分不明',
+    source: '浙江省药监局',
+  },
+  {
+    productId: 14,
+    inspectionOrg: '北京市药品检验所',
+    inspectionDate: new Date('2024-03-05'),
+    result: '不合格',
+    unqualifiedItems: '甲醛释放体超标',
+    source: '北京市监局',
+  },
+  {
+    productId: 15,
+    inspectionOrg: '江苏省药品检验所',
+    inspectionDate: new Date('2024-02-28'),
+    result: '不合格',
+    unqualifiedItems: '邻苯二甲酸酯超标',
+    source: '江苏省药监局',
+  },
+  {
+    productId: 1,
+    inspectionOrg: '广东省药品检验所',
+    inspectionDate: new Date('2024-04-01'),
+    result: '合格',
+    unqualifiedItems: null,
+    source: '广东省药监局',
+  },
+  {
+    productId: 2,
+    inspectionOrg: '上海市药品检验所',
+    inspectionDate: new Date('2024-04-02'),
+    result: '合格',
+    unqualifiedItems: null,
+    source: '上海市监局',
+  },
+  {
+    productId: 7,
+    inspectionOrg: '浙江省药品检验所',
+    inspectionDate: new Date('2024-04-03'),
+    result: '合格',
+    unqualifiedItems: null,
+    source: '浙江省药监局',
+  },
 ];
 
 async function main() {
@@ -365,28 +658,28 @@ async function main() {
   }
 
   // 创建白名单
-  const whitelistBrands = createdBrands.filter(b => b.isWhitelist);
+  const whitelistBrands = createdBrands.filter((b) => b.isWhitelist);
   for (const brand of whitelistBrands) {
     await prisma.whitelist.create({
       data: {
         brandId: brand.id,
         reason: `${brand.name}品牌产品配方安全可靠，连续3年无质量问题，抽检全部合格，获得家长一致好评。`,
-      }
+      },
     });
     console.log(`⭐ 已添加白名单: ${brand.name}`);
   }
 
   // 创建产品
   const brandMap: Record<string, number> = {};
-  createdBrands.forEach(b => brandMap[b.name] = b.id);
+  createdBrands.forEach((b) => (brandMap[b.name] = b.id));
 
   const brandProductMap: Record<string, number> = {
-    '童年色彩': brandMap['童年色彩'],
-    '天使之梦': brandMap['天使之梦'],
-    '小画家': brandMap['小画家'],
-    '彩虹公主': brandMap['彩虹公主'],
-    '梦幻星': brandMap['梦幻星'],
-    '问题品牌': brandMap['问题品牌'],
+    童年色彩: brandMap['童年色彩'],
+    天使之梦: brandMap['天使之梦'],
+    小画家: brandMap['小画家'],
+    彩虹公主: brandMap['彩虹公主'],
+    梦幻星: brandMap['梦幻星'],
+    问题品牌: brandMap['问题品牌'],
   };
 
   const createdProducts = [];
@@ -407,7 +700,7 @@ async function main() {
         brandId,
         ingredients: JSON.stringify(product.ingredients),
         highAllergenIngredients: JSON.stringify(product.highAllergenIngredients),
-      }
+      },
     });
     createdProducts.push(p);
     console.log(`💄 已创建产品: ${p.name}`);
@@ -421,7 +714,7 @@ async function main() {
       reason: '该产品无正规备案，成分不明，存在严重安全隐患',
       penaltyDate: new Date('2024-03-20'),
       source: '国家药监局',
-    }
+    },
   });
   console.log('🚫 已添加黑名单: 三无儿童口红套装');
 
@@ -432,7 +725,7 @@ async function main() {
       reason: '抽检不合格，检出禁用色素和防腐剂超标，已造成多起过敏投诉',
       penaltyDate: new Date('2024-02-25'),
       source: '广东省药监局',
-    }
+    },
   });
   console.log('🚫 已添加黑名单: 问题品牌儿童眼影');
 
@@ -443,7 +736,7 @@ async function main() {
       reason: '甲醛释放体超标，存在严重安全风险',
       penaltyDate: new Date('2024-03-10'),
       source: '北京市监局',
-    }
+    },
   });
   console.log('🚫 已添加黑名单: 问题品牌儿童指甲油');
 
@@ -454,7 +747,7 @@ async function main() {
       reason: '该品牌多款产品抽检不合格，存在严重质量问题',
       penaltyDate: new Date('2024-04-01'),
       source: '国家药监局',
-    }
+    },
   });
   console.log('🚫 已添加黑名单品牌: 问题品牌');
 
@@ -467,7 +760,7 @@ async function main() {
           ...review,
           productId: createdProducts[productIndex].id,
           allergySymptoms: review.allergySymptoms ? JSON.stringify(review.allergySymptoms) : null,
-        }
+        },
       });
     }
   }
@@ -481,7 +774,7 @@ async function main() {
         data: {
           ...ar,
           productId: createdProducts[productIndex].id,
-        }
+        },
       });
     }
   }
@@ -495,7 +788,7 @@ async function main() {
         data: {
           ...ir,
           productId: createdProducts[productIndex].id,
-        }
+        },
       });
     }
   }
@@ -516,15 +809,17 @@ async function main() {
         adverseReactions: true,
         inspectionResults: true,
         blacklist: true,
-      }
+      },
     });
 
     if (productWithRelations) {
       const { calculateTrustIndex } = await import('./utils/trustIndex');
-      const newTrustIndex = calculateTrustIndex({ product: productWithRelations as any });
+      const newTrustIndex = calculateTrustIndex({
+        product: productWithRelations as any,
+      });
       await prisma.product.update({
         where: { id: product.id },
-        data: { trustIndex: newTrustIndex }
+        data: { trustIndex: newTrustIndex },
       });
       console.log(`  ${product.name}: ${newTrustIndex.toFixed(1)}`);
     }
@@ -533,25 +828,25 @@ async function main() {
   // 创建家长用户
   const parents = [
     {
-      name: "王妈妈",
-      phone: "13800000001",
-      childName: "小宝",
+      name: '王妈妈',
+      phone: '13800000001',
+      childName: '小宝',
       childAge: 5,
-      skinType: "sensitive",
+      skinType: 'sensitive',
     },
     {
-      name: "李妈妈",
-      phone: "13800000002",
-      childName: "贝贝",
+      name: '李妈妈',
+      phone: '13800000002',
+      childName: '贝贝',
       childAge: 7,
-      skinType: "dry",
+      skinType: 'dry',
     },
     {
-      name: "张妈妈",
-      phone: "13800000003",
-      childName: "朵朵",
+      name: '张妈妈',
+      phone: '13800000003',
+      childName: '朵朵',
       childAge: 6,
-      skinType: "oily",
+      skinType: 'oily',
     },
   ];
 
@@ -571,45 +866,45 @@ async function main() {
   const allergenProfiles = [
     {
       parentId: parentId1,
-      allergenType: "香精",
-      allergenName: "日用香精",
-      severity: "严重",
-      description: "接触后会出现皮肤红肿、瘙痒",
+      allergenType: '香精',
+      allergenName: '日用香精',
+      severity: '严重',
+      description: '接触后会出现皮肤红肿、瘙痒',
     },
     {
       parentId: parentId1,
-      allergenType: "着色剂",
-      allergenName: "胭脂红",
-      severity: "中度",
-      description: "使用后唇部会出现轻微刺痛",
+      allergenType: '着色剂',
+      allergenName: '胭脂红',
+      severity: '中度',
+      description: '使用后唇部会出现轻微刺痛',
     },
     {
       parentId: parentId1,
-      allergenType: "防腐剂",
-      allergenName: "尼泊金酯",
-      severity: "轻微",
-      description: "长期使用可能导致皮肤干燥",
+      allergenType: '防腐剂',
+      allergenName: '尼泊金酯',
+      severity: '轻微',
+      description: '长期使用可能导致皮肤干燥',
     },
     {
       parentId: parentId2,
-      allergenType: "香精",
-      allergenName: "草莓香精",
-      severity: "严重",
-      description: "严重过敏反应，会出现呼吸困难",
+      allergenType: '香精',
+      allergenName: '草莓香精',
+      severity: '严重',
+      description: '严重过敏反应，会出现呼吸困难',
     },
     {
       parentId: parentId2,
-      allergenType: "着色剂",
-      allergenName: "日落黄",
-      severity: "中度",
-      description: "使用后皮肤发红",
+      allergenType: '着色剂',
+      allergenName: '日落黄',
+      severity: '中度',
+      description: '使用后皮肤发红',
     },
     {
       parentId: parentId3,
-      allergenType: "矿物油",
-      allergenName: "液体石蜡",
-      severity: "轻微",
-      description: "容易导致毛孔堵塞",
+      allergenType: '矿物油',
+      allergenName: '液体石蜡',
+      severity: '轻微',
+      description: '容易导致毛孔堵塞',
     },
   ];
 
@@ -662,11 +957,7 @@ async function main() {
 
   const createdSubscriptions: any[] = [];
   for (const sub of subscriptions) {
-    if (
-      sub.productIndex >= 0 &&
-      sub.productIndex < createdProducts.length &&
-      sub.parentId
-    ) {
+    if (sub.productIndex >= 0 && sub.productIndex < createdProducts.length && sub.parentId) {
       try {
         const s = await prisma.productSubscription.create({
           data: {
@@ -704,7 +995,7 @@ async function main() {
       for (const sub of subs) {
         notifications.push({
           parentId: sub.parentId,
-          type: "adverse_reaction",
+          type: 'adverse_reaction',
           title: `⚠️ 订阅产品不良反应通报`,
           content: `您关注的「${createdProducts[productIndex].name}」被通报新的不良反应：${ar.description}`,
           productId: createdProducts[productIndex].id,
@@ -717,7 +1008,7 @@ async function main() {
   // 为已有抽检不合格创建通知
   for (let i = 0; i < Math.min(2, inspectionResults.length); i++) {
     const ir = inspectionResults[i];
-    if (ir.result === "不合格") {
+    if (ir.result === '不合格') {
       const productIndex = ir.productId - 1;
       if (productIndex >= 0 && productIndex < createdProducts.length) {
         const subs = await prisma.productSubscription.findMany({
@@ -731,7 +1022,7 @@ async function main() {
         for (const sub of subs) {
           notifications.push({
             parentId: sub.parentId,
-            type: "inspection_failed",
+            type: 'inspection_failed',
             title: `🚨 订阅产品抽检不合格`,
             content: `您关注的「${createdProducts[productIndex].name}」抽检不合格，不合格项：${ir.unqualifiedItems}`,
             productId: createdProducts[productIndex].id,

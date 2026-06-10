@@ -1,0 +1,26 @@
+#!/usr/bin/env sh
+. "$(dirname -- "$0")/_/husky.sh"
+
+echo "🔍 运行 Prettier 自动格式化..."
+npx lint-staged
+
+echo ""
+echo "🔍 运行后端 ESLint 检查..."
+cd backend && npm run lint
+BACKEND_LINT_EXIT=$?
+cd ..
+
+echo ""
+echo "🔍 运行前端 ESLint 检查..."
+cd frontend && npm run lint
+FRONTEND_LINT_EXIT=$?
+cd ..
+
+if [ $BACKEND_LINT_EXIT -ne 0 ] || [ $FRONTEND_LINT_EXIT -ne 0 ]; then
+  echo ""
+  echo "❌ ESLint 检查未通过，请修复上述问题后再提交。"
+  exit 1
+fi
+
+echo ""
+echo "✅ 代码检查通过！"

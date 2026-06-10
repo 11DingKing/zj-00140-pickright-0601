@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState } from 'react';
 import {
   Form,
   InputNumber,
@@ -14,7 +14,7 @@ import {
   Row,
   Col,
   Statistic,
-} from "antd";
+} from 'antd';
 import {
   ThunderboltOutlined,
   SafetyOutlined,
@@ -23,11 +23,11 @@ import {
   CheckCircleOutlined,
   ExclamationCircleOutlined,
   AlertOutlined,
-} from "@ant-design/icons";
-import ProductCard from "../components/ProductCard";
-import { getRecommendations } from "../services/api";
-import type { Product, RecommendParams } from "../types";
-import { SKIN_TYPE_OPTIONS, CATEGORY_OPTIONS } from "../types";
+} from '@ant-design/icons';
+import ProductCard from '../components/ProductCard';
+import { getRecommendations } from '../services/api';
+import type { Product, RecommendParams } from '../types';
+import { SKIN_TYPE_OPTIONS, CATEGORY_OPTIONS } from '../types';
 
 const { Option } = Select;
 
@@ -58,24 +58,15 @@ const RecommendPage: React.FC = () => {
         setParams(res.data.params);
       }
     } catch (error: any) {
-      console.error("获取推荐失败:", error);
+      console.error('获取推荐失败:', error);
     } finally {
       setLoading(false);
     }
   };
 
-  const highMatchCount = products.filter(
-    (p) => (p.matchScore || 0) >= 80,
-  ).length;
-  const lowRiskCount = products.filter(
-    (p) => p.highAllergenIngredients.length === 0,
-  ).length;
-  const allergenWarningCount = products.filter(
-    (p) => p.allergenInfo?.hasAllergen,
-  ).length;
-  const severeAllergenCount = products.filter((p) =>
-    p.allergenInfo?.matchedAllergens.some((a: any) => a.severity === "严重"),
-  ).length;
+  const highMatchCount = products.filter((p) => (p.matchScore || 0) >= 80).length;
+  const lowRiskCount = products.filter((p) => p.highAllergenIngredients.length === 0).length;
+  const allergenWarningCount = products.filter((p) => p.allergenInfo?.hasAllergen).length;
 
   return (
     <div>
@@ -89,18 +80,18 @@ const RecommendPage: React.FC = () => {
           <Card
             style={{
               borderRadius: 16,
-              background: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
-              position: "sticky",
+              background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+              position: 'sticky',
               top: 88,
             }}
             bodyStyle={{ padding: 24 }}
           >
             <h3
               style={{
-                color: "white",
+                color: 'white',
                 marginBottom: 20,
-                display: "flex",
-                alignItems: "center",
+                display: 'flex',
+                alignItems: 'center',
                 gap: 8,
               }}
             >
@@ -113,19 +104,19 @@ const RecommendPage: React.FC = () => {
               onFinish={handleSubmit}
               initialValues={{
                 childAge: 5,
-                skinType: "normal",
+                skinType: 'normal',
                 excludeHighAllergen: true,
               }}
             >
               <Form.Item
                 name="childAge"
-                label={<span style={{ color: "white" }}>孩子年龄</span>}
-                rules={[{ required: true, message: "请输入孩子年龄" }]}
+                label={<span style={{ color: 'white' }}>孩子年龄</span>}
+                rules={[{ required: true, message: '请输入孩子年龄' }]}
               >
                 <InputNumber
                   min={1}
                   max={18}
-                  style={{ width: "100%" }}
+                  style={{ width: '100%' }}
                   size="large"
                   placeholder="请输入年龄（1-18岁）"
                   suffix="岁"
@@ -134,8 +125,8 @@ const RecommendPage: React.FC = () => {
 
               <Form.Item
                 name="skinType"
-                label={<span style={{ color: "white" }}>孩子肤质</span>}
-                rules={[{ required: true, message: "请选择肤质" }]}
+                label={<span style={{ color: 'white' }}>孩子肤质</span>}
+                rules={[{ required: true, message: '请选择肤质' }]}
               >
                 <Select size="large" placeholder="请选择肤质">
                   {SKIN_TYPE_OPTIONS.map((opt) => (
@@ -148,7 +139,7 @@ const RecommendPage: React.FC = () => {
 
               <Form.Item
                 name="category"
-                label={<span style={{ color: "white" }}>产品品类（可选）</span>}
+                label={<span style={{ color: 'white' }}>产品品类（可选）</span>}
               >
                 <Select size="large" placeholder="全部品类" allowClear>
                   {CATEGORY_OPTIONS.map((opt) => (
@@ -161,19 +152,19 @@ const RecommendPage: React.FC = () => {
 
               <Form.Item name="excludeHighAllergen" valuePropName="checked">
                 <Checkbox>
-                  <span style={{ color: "white" }}>排除含高致敏成分的产品</span>
+                  <span style={{ color: 'white' }}>排除含高致敏成分的产品</span>
                 </Checkbox>
               </Form.Item>
 
               <Form.Item name="excludeAllergenProducts" valuePropName="checked">
                 <Checkbox>
-                  <span style={{ color: "white" }}>排除含孩子过敏原的产品</span>
+                  <span style={{ color: 'white' }}>排除含孩子过敏原的产品</span>
                 </Checkbox>
               </Form.Item>
 
               <Form.Item name="usePersonalization" valuePropName="checked">
                 <Checkbox defaultChecked>
-                  <span style={{ color: "white" }}>启用个性化推荐</span>
+                  <span style={{ color: 'white' }}>启用个性化推荐</span>
                 </Checkbox>
               </Form.Item>
 
@@ -185,9 +176,9 @@ const RecommendPage: React.FC = () => {
                   block
                   icon={<ThunderboltOutlined />}
                   style={{
-                    background: "white",
-                    color: "#667eea",
-                    border: "none",
+                    background: 'white',
+                    color: '#667eea',
+                    border: 'none',
                     fontWeight: 600,
                     height: 48,
                   }}
@@ -202,12 +193,12 @@ const RecommendPage: React.FC = () => {
               style={{
                 marginTop: 20,
                 paddingTop: 20,
-                borderTop: "1px solid rgba(255,255,255,0.2)",
+                borderTop: '1px solid rgba(255,255,255,0.2)',
               }}
             >
               <div
                 style={{
-                  color: "rgba(255,255,255,0.85)",
+                  color: 'rgba(255,255,255,0.85)',
                   fontSize: 13,
                   marginBottom: 8,
                 }}
@@ -217,7 +208,7 @@ const RecommendPage: React.FC = () => {
               </div>
               <div
                 style={{
-                  color: "rgba(255,255,255,0.7)",
+                  color: 'rgba(255,255,255,0.7)',
                   fontSize: 12,
                   lineHeight: 1.8,
                 }}
@@ -232,9 +223,7 @@ const RecommendPage: React.FC = () => {
           <Spin spinning={loading} tip="正在为您匹配最佳产品...">
             {!submitted ? (
               <div className="search-result-empty">
-                <HeartOutlined
-                  style={{ fontSize: 64, color: "#1890ff", marginBottom: 16 }}
-                />
+                <HeartOutlined style={{ fontSize: 64, color: '#1890ff', marginBottom: 16 }} />
                 <h3 style={{ marginBottom: 8 }}>定制您的专属推荐</h3>
                 <p>
                   填写左侧表单，告诉我们孩子的年龄和肤质
@@ -254,12 +243,8 @@ const RecommendPage: React.FC = () => {
                       </span>
                       {params && (
                         <Tag color="blue">
-                          {params.childAge}岁 ·{" "}
-                          {
-                            SKIN_TYPE_OPTIONS.find(
-                              (s) => s.value === params.skinType,
-                            )?.label
-                          }
+                          {params.childAge}岁 ·{' '}
+                          {SKIN_TYPE_OPTIONS.find((s) => s.value === params.skinType)?.label}
                         </Tag>
                       )}
                     </Space>
@@ -273,11 +258,9 @@ const RecommendPage: React.FC = () => {
                       <Statistic
                         title="高匹配度"
                         value={highMatchCount}
-                        prefix={
-                          <CheckCircleOutlined style={{ color: "#52c41a" }} />
-                        }
+                        prefix={<CheckCircleOutlined style={{ color: '#52c41a' }} />}
                         suffix="个"
-                        valueStyle={{ color: "#52c41a" }}
+                        valueStyle={{ color: '#52c41a' }}
                       />
                     </Card>
                   </Col>
@@ -286,9 +269,9 @@ const RecommendPage: React.FC = () => {
                       <Statistic
                         title="无高致敏成分"
                         value={lowRiskCount}
-                        prefix={<SafetyOutlined style={{ color: "#1890ff" }} />}
+                        prefix={<SafetyOutlined style={{ color: '#1890ff' }} />}
                         suffix="个"
-                        valueStyle={{ color: "#1890ff" }}
+                        valueStyle={{ color: '#1890ff' }}
                       />
                     </Card>
                   </Col>
@@ -297,9 +280,9 @@ const RecommendPage: React.FC = () => {
                       <Statistic
                         title="含过敏原警告"
                         value={allergenWarningCount}
-                        prefix={<AlertOutlined style={{ color: "#fa8c16" }} />}
+                        prefix={<AlertOutlined style={{ color: '#fa8c16' }} />}
                         suffix="个"
-                        valueStyle={{ color: "#fa8c16" }}
+                        valueStyle={{ color: '#fa8c16' }}
                       />
                     </Card>
                   </Col>
@@ -310,18 +293,14 @@ const RecommendPage: React.FC = () => {
                         value={
                           products.length > 0
                             ? Math.round(
-                                products.reduce(
-                                  (sum, p) => sum + (p.matchScore || 0),
-                                  0,
-                                ) / products.length,
+                                products.reduce((sum, p) => sum + (p.matchScore || 0), 0) /
+                                  products.length,
                               )
                             : 0
                         }
-                        prefix={
-                          <ThunderboltOutlined style={{ color: "#722ed1" }} />
-                        }
+                        prefix={<ThunderboltOutlined style={{ color: '#722ed1' }} />}
                         suffix="%"
-                        valueStyle={{ color: "#722ed1" }}
+                        valueStyle={{ color: '#722ed1' }}
                       />
                     </Card>
                   </Col>
@@ -329,27 +308,27 @@ const RecommendPage: React.FC = () => {
 
                 <div>
                   {products.map((product) => (
-                    <div key={product.id} style={{ position: "relative" }}>
+                    <div key={product.id} style={{ position: 'relative' }}>
                       {product.matchScore !== undefined && (
                         <div style={{ marginBottom: 8 }}>
                           <div
                             style={{
-                              display: "flex",
-                              justifyContent: "space-between",
-                              alignItems: "center",
+                              display: 'flex',
+                              justifyContent: 'space-between',
+                              alignItems: 'center',
                               marginBottom: 4,
                             }}
                           >
-                            <span style={{ fontSize: 12, color: "#8c8c8c" }}>
+                            <span style={{ fontSize: 12, color: '#8c8c8c' }}>
                               匹配度 {product.matchScore}%
                             </span>
                             <Tag
                               color={
                                 product.matchScore >= 80
-                                  ? "green"
+                                  ? 'green'
                                   : product.matchScore >= 60
-                                    ? "blue"
-                                    : "orange"
+                                    ? 'blue'
+                                    : 'orange'
                               }
                               icon={
                                 product.matchScore >= 80 ? (
@@ -360,10 +339,10 @@ const RecommendPage: React.FC = () => {
                               }
                             >
                               {product.matchScore >= 80
-                                ? "非常匹配"
+                                ? '非常匹配'
                                 : product.matchScore >= 60
-                                  ? "比较匹配"
-                                  : "一般匹配"}
+                                  ? '比较匹配'
+                                  : '一般匹配'}
                             </Tag>
                           </div>
                           <div className="match-score-bar">
@@ -374,11 +353,7 @@ const RecommendPage: React.FC = () => {
                           </div>
                         </div>
                       )}
-                      <ProductCard
-                        key={product.id}
-                        product={product}
-                        showMatchScore={false}
-                      />
+                      <ProductCard key={product.id} product={product} showMatchScore={false} />
                     </div>
                   ))}
                 </div>
@@ -390,9 +365,7 @@ const RecommendPage: React.FC = () => {
                     <span>
                       暂无匹配的产品
                       <br />
-                      <span style={{ color: "#8c8c8c", fontSize: 13 }}>
-                        建议调整筛选条件后重试
-                      </span>
+                      <span style={{ color: '#8c8c8c', fontSize: 13 }}>建议调整筛选条件后重试</span>
                     </span>
                   }
                 />

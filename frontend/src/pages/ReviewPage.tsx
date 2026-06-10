@@ -31,11 +31,7 @@ import {
 } from '@ant-design/icons';
 import { getMyReviews, createReview, searchProducts } from '../services/api';
 import type { Review, Product } from '../types';
-import {
-  SKIN_TYPE_OPTIONS,
-  ALLERGY_SYMPTOMS,
-  USAGE_DURATION_OPTIONS,
-} from '../types';
+import { SKIN_TYPE_OPTIONS, ALLERGY_SYMPTOMS, USAGE_DURATION_OPTIONS } from '../types';
 
 const { TextArea } = Input;
 const { Option } = Select;
@@ -81,7 +77,7 @@ const ReviewPage: React.FC = () => {
     try {
       const res = await searchProducts(keyword);
       if (res.data.success) {
-        setProductSearchResults(res.data.data.filter(p => p.isRegistered && !p.isBlacklisted));
+        setProductSearchResults(res.data.data.filter((p) => p.isRegistered && !p.isBlacklisted));
       }
     } catch (error) {
       console.error('搜索产品失败:', error);
@@ -120,9 +116,7 @@ const ReviewPage: React.FC = () => {
             content: (
               <div>
                 <p>{data.reportTip}</p>
-                <p style={{ marginTop: 12 }}>
-                  全国化妆品不良反应监测联系电话：12315
-                </p>
+                <p style={{ marginTop: 12 }}>全国化妆品不良反应监测联系电话：12315</p>
               </div>
             ),
             okText: '我知道了',
@@ -153,7 +147,7 @@ const ReviewPage: React.FC = () => {
     return new Date(dateStr).toLocaleDateString('zh-CN');
   };
 
-  const allergyReviewCount = reviews.filter(r => r.hasAllergy).length;
+  const allergyReviewCount = reviews.filter((r) => r.hasAllergy).length;
 
   const tabItems = [
     {
@@ -179,9 +173,7 @@ const ReviewPage: React.FC = () => {
   return (
     <div>
       <h1 className="page-title">📝 我的评价反馈</h1>
-      <p className="page-subtitle">
-        分享您的使用体验和过敏反应，帮助更多家长做出明智的选择
-      </p>
+      <p className="page-subtitle">分享您的使用体验和过敏反应，帮助更多家长做出明智的选择</p>
 
       {needReport && reportTip && (
         <Alert
@@ -235,7 +227,11 @@ const ReviewPage: React.FC = () => {
           <Card>
             <Statistic
               title="平均评分"
-              value={reviews.length > 0 ? (reviews.reduce((sum, r) => sum + r.rating, 0) / reviews.length).toFixed(1) : '0.0'}
+              value={
+                reviews.length > 0
+                  ? (reviews.reduce((sum, r) => sum + r.rating, 0) / reviews.length).toFixed(1)
+                  : '0.0'
+              }
               prefix={<CheckCircleOutlined style={{ color: '#52c41a' }} />}
               valueStyle={{ color: '#52c41a' }}
               suffix="/ 5"
@@ -268,19 +264,24 @@ const ReviewPage: React.FC = () => {
                   }}
                 >
                   <div style={{ width: '100%' }}>
-                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 12 }}>
+                    <div
+                      style={{
+                        display: 'flex',
+                        justifyContent: 'space-between',
+                        alignItems: 'flex-start',
+                        marginBottom: 12,
+                      }}
+                    >
                       <div>
                         <h4 style={{ margin: '0 0 8px 0', fontSize: 16 }}>
                           {review.product?.name}
                         </h4>
                         <Space size={[4, 8]} wrap>
                           <Tag>
-                            {SKIN_TYPE_OPTIONS.find(s => s.value === review.skinType)?.label}
+                            {SKIN_TYPE_OPTIONS.find((s) => s.value === review.skinType)?.label}
                           </Tag>
                           <Tag>{review.childAge}岁</Tag>
-                          {review.usageDuration && (
-                            <Tag>使用{review.usageDuration}</Tag>
-                          )}
+                          {review.usageDuration && <Tag>使用{review.usageDuration}</Tag>}
                         </Space>
                       </div>
                       <div style={{ textAlign: 'right' }}>
@@ -295,7 +296,9 @@ const ReviewPage: React.FC = () => {
 
                     {review.hasAllergy && (
                       <div className="allergy-alert">
-                        <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 8 }}>
+                        <div
+                          style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 8 }}
+                        >
                           <WarningOutlined style={{ color: '#ff4d4f' }} />
                           <strong style={{ color: '#cf1322' }}>出现过敏反应</strong>
                         </div>
@@ -306,7 +309,11 @@ const ReviewPage: React.FC = () => {
                     )}
 
                     {review.product && (
-                      <Descriptions column={3} size="small" style={{ marginTop: 16, paddingTop: 16, borderTop: '1px solid #f0f0f0' }}>
+                      <Descriptions
+                        column={3}
+                        size="small"
+                        style={{ marginTop: 16, paddingTop: 16, borderTop: '1px solid #f0f0f0' }}
+                      >
                         <Descriptions.Item label="品牌">
                           {review.product.brand.name}
                         </Descriptions.Item>
@@ -349,7 +356,7 @@ const ReviewPage: React.FC = () => {
               <p style={{ fontSize: 13, color: '#8c8c8c', marginBottom: 12 }}>
                 找到 {productSearchResults.length} 个产品，请选择：
               </p>
-              {productSearchResults.map(product => (
+              {productSearchResults.map((product) => (
                 <Card
                   key={product.id}
                   hoverable
@@ -357,11 +364,20 @@ const ReviewPage: React.FC = () => {
                   style={{
                     marginBottom: 8,
                     borderRadius: 8,
-                    border: selectedProduct?.id === product.id ? '2px solid #1890ff' : '1px solid #f0f0f0',
+                    border:
+                      selectedProduct?.id === product.id
+                        ? '2px solid #1890ff'
+                        : '1px solid #f0f0f0',
                   }}
                   bodyStyle={{ padding: 16 }}
                 >
-                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                  <div
+                    style={{
+                      display: 'flex',
+                      justifyContent: 'space-between',
+                      alignItems: 'center',
+                    }}
+                  >
                     <div>
                       <strong>{product.name}</strong>
                       <div style={{ fontSize: 12, color: '#8c8c8c', marginTop: 4 }}>
@@ -372,9 +388,7 @@ const ReviewPage: React.FC = () => {
                       <div style={{ color: product.trustLevel.color, fontWeight: 600 }}>
                         {product.trustIndex.toFixed(1)}
                       </div>
-                      <div style={{ fontSize: 11, color: product.trustLevel.color }}>
-                        放心指数
-                      </div>
+                      <div style={{ fontSize: 11, color: product.trustLevel.color }}>放心指数</div>
                     </div>
                   </div>
                 </Card>
@@ -389,7 +403,9 @@ const ReviewPage: React.FC = () => {
                 showIcon
                 message={
                   <Space>
-                    <span>已选择：<strong>{selectedProduct.name}</strong></span>
+                    <span>
+                      已选择：<strong>{selectedProduct.name}</strong>
+                    </span>
                     <Button size="small" type="link" onClick={() => setSelectedProduct(null)}>
                       重新选择
                     </Button>
@@ -431,7 +447,7 @@ const ReviewPage: React.FC = () => {
                       rules={[{ required: true, message: '请选择肤质' }]}
                     >
                       <Select placeholder="请选择肤质">
-                        {SKIN_TYPE_OPTIONS.map(opt => (
+                        {SKIN_TYPE_OPTIONS.map((opt) => (
                           <Option key={opt.value} value={opt.value}>
                             {opt.label}
                           </Option>
@@ -452,12 +468,9 @@ const ReviewPage: React.FC = () => {
                     </Form.Item>
                   </Col>
                   <Col xs={24} md={12}>
-                    <Form.Item
-                      name="usageDuration"
-                      label="使用时长"
-                    >
+                    <Form.Item name="usageDuration" label="使用时长">
                       <Select placeholder="请选择使用时长" allowClear>
-                        {USAGE_DURATION_OPTIONS.map(opt => (
+                        {USAGE_DURATION_OPTIONS.map((opt) => (
                           <Option key={opt.value} value={opt.value}>
                             {opt.label}
                           </Option>
@@ -483,11 +496,7 @@ const ReviewPage: React.FC = () => {
                   />
                 </Form.Item>
 
-                <Form.Item
-                  name="hasAllergy"
-                  valuePropName="checked"
-                  style={{ marginBottom: 8 }}
-                >
+                <Form.Item name="hasAllergy" valuePropName="checked" style={{ marginBottom: 8 }}>
                   <Checkbox>
                     <span style={{ color: '#cf1322' }}>
                       <WarningOutlined /> 使用后出现过敏反应
@@ -511,13 +520,15 @@ const ReviewPage: React.FC = () => {
                       >
                         <Checkbox.Group>
                           <Space wrap>
-                            {ALLERGY_SYMPTOMS.map(symptom => (
+                            {ALLERGY_SYMPTOMS.map((symptom) => (
                               <Checkbox
                                 key={symptom}
                                 value={symptom}
-                                style={['呼吸困难', '严重红肿', '大面积皮疹', '水疱'].includes(symptom)
-                                  ? { color: '#cf1322' }
-                                  : {}}
+                                style={
+                                  ['呼吸困难', '严重红肿', '大面积皮疹', '水疱'].includes(symptom)
+                                    ? { color: '#cf1322' }
+                                    : {}
+                                }
                               >
                                 {symptom}
                               </Checkbox>

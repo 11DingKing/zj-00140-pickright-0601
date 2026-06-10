@@ -5,12 +5,38 @@
   "private": true,
   "scripts": {
     "install:all": "npm install && cd backend && npm install && cd ../frontend && npm install",
+    "setup": "npm run install:all && npm run db:setup",
     "dev:backend": "cd backend && npm run dev",
     "dev:frontend": "cd frontend && npm run dev",
     "dev": "concurrently \"npm run dev:backend\" \"npm run dev:frontend\"",
-    "seed": "cd backend && npm run seed"
+    "build:backend": "cd backend && npm run build",
+    "build:frontend": "cd frontend && npm run build",
+    "build": "npm run build:backend && npm run build:frontend",
+    "db:generate": "cd backend && npm run prisma:generate",
+    "db:migrate": "cd backend && npm run prisma:migrate",
+    "db:seed": "cd backend && npm run seed",
+    "db:setup": "npm run db:generate && npm run db:migrate && npm run db:seed",
+    "seed": "cd backend && npm run seed",
+    "lint": "cd backend && npm run lint && cd ../frontend && npm run lint",
+    "lint:fix": "cd backend && npm run lint:fix && cd ../frontend && npm run lint:fix",
+    "format": "prettier --write \"**/*.{ts,tsx,js,json,css,html,md}\"",
+    "format:check": "prettier --check \"**/*.{ts,tsx,js,json,css,html,md}\"",
+    "docker:up": "docker compose up -d",
+    "docker:down": "docker compose down",
+    "docker:seed": "docker compose run --rm seed",
+    "docker:build": "docker compose build",
+    "docker:setup": "docker compose build && docker compose up -d && sleep 3 && docker compose run --rm seed",
+    "prepare": "husky"
   },
   "devDependencies": {
-    "concurrently": "^8.2.2"
+    "concurrently": "^8.2.2",
+    "prettier": "^3.2.5",
+    "husky": "^9.0.11",
+    "lint-staged": "^15.2.2"
+  },
+  "lint-staged": {
+    "*.{ts,tsx,js,json,css,html,md}": [
+      "prettier --write"
+    ]
   }
 }

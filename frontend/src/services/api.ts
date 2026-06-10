@@ -1,4 +1,4 @@
-import axios from "axios";
+import axios from 'axios';
 import type {
   Product,
   ProductDetail,
@@ -11,10 +11,10 @@ import type {
   AllergenProfile,
   ProductSubscription,
   Notification,
-} from "../types";
+} from '../types';
 
 const api = axios.create({
-  baseURL: "/api",
+  baseURL: '/api',
   timeout: 10000,
 });
 
@@ -24,7 +24,7 @@ export const searchProducts = (keyword: string, category?: string) => {
     success: boolean;
     data: Product[];
     total: number;
-  }>("/products/search", {
+  }>('/products/search', {
     params: { keyword, category },
   });
 };
@@ -40,7 +40,7 @@ export const getCategories = () => {
   return api.get<{
     success: boolean;
     data: Category[];
-  }>("/products/categories");
+  }>('/products/categories');
 };
 
 // 榜单相关接口
@@ -48,21 +48,21 @@ export const getWhitelist = () => {
   return api.get<{
     success: boolean;
     data: WhitelistItem[];
-  }>("/lists/whitelist");
+  }>('/lists/whitelist');
 };
 
 export const getBlacklist = () => {
   return api.get<{
     success: boolean;
     data: Blacklist[];
-  }>("/lists/blacklist");
+  }>('/lists/blacklist');
 };
 
 export const getTrustRank = (category?: string, limit?: number) => {
   return api.get<{
     success: boolean;
     data: Product[];
-  }>("/lists/trust-rank", {
+  }>('/lists/trust-rank', {
     params: { category, limit },
   });
 };
@@ -73,7 +73,7 @@ export const getRecommendations = (params: RecommendParams) => {
     success: boolean;
     data: Product[];
     params: RecommendParams;
-  }>("/products/recommend", { params });
+  }>('/products/recommend', { params });
 };
 
 // 评价相关接口
@@ -90,14 +90,14 @@ export const createReview = (data: {
   return api.post<{
     success: boolean;
     data: Review;
-  }>("/reviews", data);
+  }>('/reviews', data);
 };
 
 export const getMyReviews = () => {
   return api.get<{
     success: boolean;
     data: Review[];
-  }>("/reviews/my");
+  }>('/reviews/my');
 };
 
 export const getProductReviews = (productId: number) => {
@@ -117,7 +117,7 @@ export const getCurrentParent = () => {
   return api.get<{
     success: boolean;
     data: Parent;
-  }>("/parent/me");
+  }>('/parent/me');
 };
 
 export const updateParent = (data: {
@@ -129,14 +129,14 @@ export const updateParent = (data: {
   return api.put<{
     success: boolean;
     data: Parent;
-  }>("/parent/me", data);
+  }>('/parent/me', data);
 };
 
 export const getAllergenProfiles = () => {
   return api.get<{
     success: boolean;
     data: AllergenProfile[];
-  }>("/parent/allergen-profiles");
+  }>('/parent/allergen-profiles');
 };
 
 export const addAllergenProfile = (data: {
@@ -148,7 +148,7 @@ export const addAllergenProfile = (data: {
   return api.post<{
     success: boolean;
     data: AllergenProfile;
-  }>("/parent/allergen-profiles", data);
+  }>('/parent/allergen-profiles', data);
 };
 
 export const updateAllergenProfile = (
@@ -177,7 +177,7 @@ export const getSubscriptions = () => {
   return api.get<{
     success: boolean;
     data: ProductSubscription[];
-  }>("/parent/subscriptions");
+  }>('/parent/subscriptions');
 };
 
 export const addSubscription = (data: {
@@ -189,7 +189,7 @@ export const addSubscription = (data: {
     success: boolean;
     data: ProductSubscription;
     message: string;
-  }>("/parent/subscriptions", data);
+  }>('/parent/subscriptions', data);
 };
 
 export const updateSubscription = (
@@ -227,8 +227,8 @@ export const getNotifications = (unreadOnly?: boolean) => {
     success: boolean;
     data: Notification[];
     unreadCount: number;
-  }>("/parent/notifications", {
-    params: unreadOnly ? { unreadOnly: "true" } : {},
+  }>('/parent/notifications', {
+    params: unreadOnly ? { unreadOnly: 'true' } : {},
   });
 };
 
@@ -243,14 +243,14 @@ export const markAllNotificationsRead = () => {
   return api.put<{
     success: boolean;
     message: string;
-  }>("/parent/notifications/read-all");
+  }>('/parent/notifications/read-all');
 };
 
 export const getUnreadCount = () => {
   return api.get<{
     success: boolean;
     data: { count: number };
-  }>("/parent/notifications/unread-count");
+  }>('/parent/notifications/unread-count');
 };
 
 export default api;

@@ -6,7 +6,6 @@ import {
   StarOutlined,
   WarningOutlined,
   SafetyOutlined,
-  ExclamationCircleOutlined,
   CheckCircleOutlined,
   CloseCircleOutlined,
 } from '@ant-design/icons';
@@ -130,9 +129,22 @@ const RankPage: React.FC = () => {
                     style={{ marginBottom: 16, borderRadius: 12 }}
                     bodyStyle={{ padding: 24 }}
                   >
-                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+                    <div
+                      style={{
+                        display: 'flex',
+                        justifyContent: 'space-between',
+                        alignItems: 'flex-start',
+                      }}
+                    >
                       <div style={{ flex: 1 }}>
-                        <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 12 }}>
+                        <div
+                          style={{
+                            display: 'flex',
+                            alignItems: 'center',
+                            gap: 12,
+                            marginBottom: 12,
+                          }}
+                        >
                           <div
                             style={{
                               width: 48,
@@ -174,16 +186,14 @@ const RankPage: React.FC = () => {
                           <div style={{ fontSize: 13, color: '#8c8c8c', marginBottom: 8 }}>
                             入选理由：
                           </div>
-                          <div style={{ fontSize: 14, color: '#262626' }}>
-                            {item.reason}
-                          </div>
+                          <div style={{ fontSize: 14, color: '#262626' }}>{item.reason}</div>
                         </div>
 
                         <div style={{ fontSize: 13, color: '#8c8c8c', marginBottom: 8 }}>
                           旗下安全产品（{item.brand.products.length}个）：
                         </div>
                         <Space wrap>
-                          {item.brand.products.slice(0, 5).map(p => (
+                          {item.brand.products.slice(0, 5).map((p) => (
                             <Button
                               key={p.id}
                               type="primary"
@@ -218,12 +228,8 @@ const RankPage: React.FC = () => {
 
             {trustRank.length > 0 ? (
               <div>
-                {trustRank.map((product, index) => (
-                  <ProductCard
-                    key={product.id}
-                    product={product}
-                    showRank={true}
-                  />
+                {trustRank.map((product) => (
+                  <ProductCard key={product.id} product={product} showRank={true} />
                 ))}
               </div>
             ) : (
@@ -278,13 +284,18 @@ const RankPage: React.FC = () => {
                           <CloseCircleOutlined />
                         </div>
                         <div style={{ flex: 1 }}>
-                          <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 8 }}>
+                          <div
+                            style={{
+                              display: 'flex',
+                              alignItems: 'center',
+                              gap: 8,
+                              marginBottom: 8,
+                            }}
+                          >
                             <Tag color="red" icon={<WarningOutlined />}>
                               {item.type === 'brand' ? '问题品牌' : '问题产品'}
                             </Tag>
-                            <Tag color="red">
-                              {item.source}
-                            </Tag>
+                            <Tag color="red">{item.source}</Tag>
                           </div>
 
                           <h3 style={{ margin: '0 0 8px 0', color: '#cf1322', fontSize: 16 }}>
@@ -295,9 +306,7 @@ const RankPage: React.FC = () => {
                             <div style={{ fontSize: 13, color: '#8c8c8c', marginBottom: 4 }}>
                               处罚原因：
                             </div>
-                            <div style={{ fontSize: 14, color: '#262626' }}>
-                              {item.reason}
-                            </div>
+                            <div style={{ fontSize: 14, color: '#262626' }}>{item.reason}</div>
                           </div>
 
                           <Space wrap size={[0, 8]}>

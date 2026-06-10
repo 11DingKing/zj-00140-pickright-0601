@@ -1,6 +1,6 @@
-import React from "react";
-import { Routes, Route, useLocation, useNavigate } from "react-router-dom";
-import { Layout, Menu, Badge, Dropdown, Space, Avatar } from "antd";
+import React from 'react';
+import { Routes, Route, useLocation, useNavigate } from 'react-router-dom';
+import { Layout, Menu, Badge, Dropdown, Space, Avatar } from 'antd';
 import {
   SearchOutlined,
   TrophyOutlined,
@@ -12,16 +12,16 @@ import {
   AlertOutlined,
   BellFilled,
   UserOutlined,
-} from "@ant-design/icons";
-import SearchPage from "./pages/SearchPage";
-import RankPage from "./pages/RankPage";
-import RecommendPage from "./pages/RecommendPage";
-import ReviewPage from "./pages/ReviewPage";
-import ProductDetailPage from "./pages/ProductDetailPage";
-import AllergenProfilePage from "./pages/AllergenProfilePage";
-import SubscriptionPage from "./pages/SubscriptionPage";
-import NotificationPage from "./pages/NotificationPage";
-import { useParent } from "./context/ParentContext";
+} from '@ant-design/icons';
+import SearchPage from './pages/SearchPage';
+import RankPage from './pages/RankPage';
+import RecommendPage from './pages/RecommendPage';
+import ReviewPage from './pages/ReviewPage';
+import ProductDetailPage from './pages/ProductDetailPage';
+import AllergenProfilePage from './pages/AllergenProfilePage';
+import SubscriptionPage from './pages/SubscriptionPage';
+import NotificationPage from './pages/NotificationPage';
+import { useParent } from './context/ParentContext';
 
 const { Header, Content } = Layout;
 
@@ -31,79 +31,77 @@ const App: React.FC = () => {
   const { unreadCount, parent } = useParent();
 
   const getSelectedKey = () => {
-    if (location.pathname.startsWith("/search")) return "search";
-    if (location.pathname.startsWith("/rank")) return "rank";
-    if (location.pathname.startsWith("/recommend")) return "recommend";
-    if (location.pathname.startsWith("/reviews")) return "reviews";
-    if (location.pathname.startsWith("/allergen")) return "allergen";
-    if (location.pathname.startsWith("/subscriptions")) return "subscriptions";
-    return "search";
+    if (location.pathname.startsWith('/search')) return 'search';
+    if (location.pathname.startsWith('/rank')) return 'rank';
+    if (location.pathname.startsWith('/recommend')) return 'recommend';
+    if (location.pathname.startsWith('/reviews')) return 'reviews';
+    if (location.pathname.startsWith('/allergen')) return 'allergen';
+    if (location.pathname.startsWith('/subscriptions')) return 'subscriptions';
+    return 'search';
   };
 
   const menuItems = [
     {
-      key: "search",
+      key: 'search',
       icon: <SearchOutlined />,
-      label: "产品查询",
-      onClick: () => navigate("/search"),
+      label: '产品查询',
+      onClick: () => navigate('/search'),
     },
     {
-      key: "rank",
+      key: 'rank',
       icon: <TrophyOutlined />,
-      label: "放心榜与黑榜",
-      onClick: () => navigate("/rank"),
+      label: '放心榜与黑榜',
+      onClick: () => navigate('/rank'),
     },
     {
-      key: "recommend",
+      key: 'recommend',
       icon: <ThunderboltOutlined />,
-      label: "按需推荐",
-      onClick: () => navigate("/recommend"),
+      label: '按需推荐',
+      onClick: () => navigate('/recommend'),
     },
     {
-      key: "reviews",
+      key: 'reviews',
       icon: <FormOutlined />,
-      label: "我的评价反馈",
-      onClick: () => navigate("/reviews"),
+      label: '我的评价反馈',
+      onClick: () => navigate('/reviews'),
     },
     {
-      key: "allergen",
+      key: 'allergen',
       icon: <AlertOutlined />,
-      label: "过敏原设置",
-      onClick: () => navigate("/allergen"),
+      label: '过敏原设置',
+      onClick: () => navigate('/allergen'),
     },
     {
-      key: "subscriptions",
+      key: 'subscriptions',
       icon: <BellOutlined />,
-      label: "我的订阅",
-      onClick: () => navigate("/subscriptions"),
+      label: '我的订阅',
+      onClick: () => navigate('/subscriptions'),
     },
   ];
 
   const userMenuItems = [
     {
-      key: "notifications",
+      key: 'notifications',
       icon: <BellOutlined />,
       label: (
         <span>
           消息中心
-          {unreadCount > 0 && (
-            <Badge count={unreadCount} size="small" style={{ marginLeft: 8 }} />
-          )}
+          {unreadCount > 0 && <Badge count={unreadCount} size="small" style={{ marginLeft: 8 }} />}
         </span>
       ),
-      onClick: () => navigate("/notifications"),
+      onClick: () => navigate('/notifications'),
     },
     {
-      key: "allergen",
+      key: 'allergen',
       icon: <AlertOutlined />,
-      label: "过敏原设置",
-      onClick: () => navigate("/allergen"),
+      label: '过敏原设置',
+      onClick: () => navigate('/allergen'),
     },
     {
-      key: "subscriptions",
+      key: 'subscriptions',
       icon: <BellOutlined />,
-      label: "我的订阅",
-      onClick: () => navigate("/subscriptions"),
+      label: '我的订阅',
+      onClick: () => navigate('/subscriptions'),
     },
   ];
 
@@ -111,34 +109,30 @@ const App: React.FC = () => {
     <Layout>
       <Header
         style={{
-          position: "sticky",
+          position: 'sticky',
           top: 0,
           zIndex: 100,
-          width: "100%",
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "space-between",
+          width: '100%',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'space-between',
         }}
       >
-        <div style={{ display: "flex", alignItems: "center" }}>
+        <div style={{ display: 'flex', alignItems: 'center' }}>
           <div
             style={{
-              display: "flex",
-              alignItems: "center",
+              display: 'flex',
+              alignItems: 'center',
               gap: 12,
-              color: "white",
-              cursor: "pointer",
+              color: 'white',
+              cursor: 'pointer',
             }}
-            onClick={() => navigate("/")}
+            onClick={() => navigate('/')}
           >
             <ShoppingOutlined style={{ fontSize: 28 }} />
             <div>
-              <div style={{ fontSize: 20, fontWeight: 700, lineHeight: 1.2 }}>
-                PickRight
-              </div>
-              <div style={{ fontSize: 11, opacity: 0.9, lineHeight: 1.2 }}>
-                儿童彩妆选购助手
-              </div>
+              <div style={{ fontSize: 20, fontWeight: 700, lineHeight: 1.2 }}>PickRight</div>
+              <div style={{ fontSize: 11, opacity: 0.9, lineHeight: 1.2 }}>儿童彩妆选购助手</div>
             </div>
           </div>
 
@@ -149,8 +143,8 @@ const App: React.FC = () => {
             style={{
               minWidth: 600,
               marginLeft: 24,
-              background: "transparent",
-              borderBottom: "none",
+              background: 'transparent',
+              borderBottom: 'none',
             }}
             theme="dark"
           />
@@ -159,14 +153,14 @@ const App: React.FC = () => {
         <Space size={16}>
           <Badge count={unreadCount} size="small" offset={[-2, 2]}>
             <BellFilled
-              style={{ fontSize: 20, color: "white", cursor: "pointer" }}
-              onClick={() => navigate("/notifications")}
+              style={{ fontSize: 20, color: 'white', cursor: 'pointer' }}
+              onClick={() => navigate('/notifications')}
             />
           </Badge>
           <Dropdown menu={{ items: userMenuItems }} placement="bottomRight">
-            <Space style={{ cursor: "pointer", color: "white" }}>
+            <Space style={{ cursor: 'pointer', color: 'white' }}>
               <Avatar size="small" icon={<UserOutlined />} />
-              <span>{parent?.childName || "用户"}</span>
+              <span>{parent?.childName || '用户'}</span>
             </Space>
           </Dropdown>
         </Space>

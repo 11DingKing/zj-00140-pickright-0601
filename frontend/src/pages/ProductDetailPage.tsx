@@ -1,6 +1,19 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { Button, Space, Tag, Descriptions, List, Rate, Statistic, Row, Col, Card, Alert, Modal } from 'antd';
+import {
+  Button,
+  Space,
+  Tag,
+  Descriptions,
+  List,
+  Rate,
+  Statistic,
+  Row,
+  Col,
+  Card,
+  Alert,
+  Modal,
+} from 'antd';
 import {
   ArrowLeftOutlined,
   CheckCircleOutlined,
@@ -57,8 +70,14 @@ const ProductDetailPage: React.FC = () => {
 
   const getCategoryEmoji = (category: string) => {
     const emojiMap: Record<string, string> = {
-      '口红': '💄', '眼影': '👁️', '腮红': '🎀', '粉底': '✨',
-      '眼线': '🖌️', '指甲油': '💅', '唇彩': '💋', '套装': '🎁',
+      口红: '💄',
+      眼影: '👁️',
+      腮红: '🎀',
+      粉底: '✨',
+      眼线: '🖌️',
+      指甲油: '💅',
+      唇彩: '💋',
+      套装: '🎁',
     };
     return emojiMap[category] || '🎨';
   };
@@ -89,11 +108,10 @@ const ProductDetailPage: React.FC = () => {
             <div className="warning-banner">
               <CloseCircleOutlined style={{ fontSize: 32 }} />
               <div>
-                <div style={{ fontSize: 20, fontWeight: 700, marginBottom: 4 }}>
-                  ⚠️ 危险警告
-                </div>
+                <div style={{ fontSize: 20, fontWeight: 700, marginBottom: 4 }}>⚠️ 危险警告</div>
                 <div style={{ fontSize: 14, opacity: 0.95 }}>
-                  {product.blacklist?.reason || '该产品存在严重安全隐患，已被监管部门列入黑名单，请勿购买使用！'}
+                  {product.blacklist?.reason ||
+                    '该产品存在严重安全隐患，已被监管部门列入黑名单，请勿购买使用！'}
                 </div>
               </div>
             </div>
@@ -115,9 +133,7 @@ const ProductDetailPage: React.FC = () => {
             <div className="safe-banner">
               <SafetyOutlined style={{ fontSize: 32 }} />
               <div>
-                <div style={{ fontSize: 20, fontWeight: 700, marginBottom: 4 }}>
-                  ✅ 安全可靠
-                </div>
+                <div style={{ fontSize: 20, fontWeight: 700, marginBottom: 4 }}>✅ 安全可靠</div>
                 <div style={{ fontSize: 14, opacity: 0.95 }}>
                   该产品已备案在册，品牌为白名单信誉企业，可放心选购。
                 </div>
@@ -135,15 +151,23 @@ const ProductDetailPage: React.FC = () => {
                     <h1 style={{ margin: 0, fontSize: 24, fontWeight: 700 }}>{product.name}</h1>
                     <Space size={[4, 8]} wrap style={{ marginTop: 8 }}>
                       {product.isRegistered ? (
-                        <Tag color="green" icon={<CheckCircleOutlined />}>已备案在册</Tag>
+                        <Tag color="green" icon={<CheckCircleOutlined />}>
+                          已备案在册
+                        </Tag>
                       ) : (
-                        <Tag color="orange" icon={<ExclamationCircleOutlined />}>未在册</Tag>
+                        <Tag color="orange" icon={<ExclamationCircleOutlined />}>
+                          未在册
+                        </Tag>
                       )}
                       {product.brand.isWhitelist && (
-                        <Tag color="gold" icon={<StarOutlined />}>白名单品牌</Tag>
+                        <Tag color="gold" icon={<StarOutlined />}>
+                          白名单品牌
+                        </Tag>
                       )}
                       {product.isMinimalFormula && (
-                        <Tag color="cyan" icon={<SafetyOutlined />}>极简配方</Tag>
+                        <Tag color="cyan" icon={<SafetyOutlined />}>
+                          极简配方
+                        </Tag>
                       )}
                       <Tag>{product.category}</Tag>
                     </Space>
@@ -158,11 +182,15 @@ const ProductDetailPage: React.FC = () => {
                   </Descriptions.Item>
                   <Descriptions.Item label="品牌">{product.brand.name}</Descriptions.Item>
                   <Descriptions.Item label="备案企业">{product.brand.company}</Descriptions.Item>
-                  <Descriptions.Item label="适用年龄">{product.minAge}-{product.maxAge}岁</Descriptions.Item>
+                  <Descriptions.Item label="适用年龄">
+                    {product.minAge}-{product.maxAge}岁
+                  </Descriptions.Item>
                   <Descriptions.Item label="规格">{product.specification || '-'}</Descriptions.Item>
                   <Descriptions.Item label="保质期">{product.shelfLife || '-'}</Descriptions.Item>
                   <Descriptions.Item label="基础安全分">{product.safetyScore}分</Descriptions.Item>
-                  <Descriptions.Item label="更新时间">{formatDate(product.updatedAt)}</Descriptions.Item>
+                  <Descriptions.Item label="更新时间">
+                    {formatDate(product.updatedAt)}
+                  </Descriptions.Item>
                 </Descriptions>
               </div>
 
@@ -221,8 +249,16 @@ const ProductDetailPage: React.FC = () => {
                     title="过敏率"
                     value={product.allergyRate}
                     suffix="%"
-                    prefix={<ExclamationCircleOutlined style={{ color: parseFloat(product.allergyRate) > 10 ? '#ff4d4f' : '#faad14' }} />}
-                    valueStyle={{ color: parseFloat(product.allergyRate) > 10 ? '#ff4d4f' : '#faad14' }}
+                    prefix={
+                      <ExclamationCircleOutlined
+                        style={{
+                          color: parseFloat(product.allergyRate) > 10 ? '#ff4d4f' : '#faad14',
+                        }}
+                      />
+                    }
+                    valueStyle={{
+                      color: parseFloat(product.allergyRate) > 10 ? '#ff4d4f' : '#faad14',
+                    }}
                   />
                 </Card>
               </Col>
@@ -232,7 +268,9 @@ const ProductDetailPage: React.FC = () => {
                     title="不良反应通报"
                     value={product.adverseReactions.length}
                     prefix={<FileSearchOutlined style={{ color: '#ff4d4f' }} />}
-                    valueStyle={{ color: product.adverseReactions.length > 0 ? '#ff4d4f' : '#52c41a' }}
+                    valueStyle={{
+                      color: product.adverseReactions.length > 0 ? '#ff4d4f' : '#52c41a',
+                    }}
                   />
                 </Card>
               </Col>
@@ -247,10 +285,14 @@ const ProductDetailPage: React.FC = () => {
 
             <Row gutter={24}>
               <Col xs={24} md={12}>
-                <h4 style={{ marginBottom: 12, color: '#595959' }}>全部成分 ({product.ingredients.length}种)</h4>
+                <h4 style={{ marginBottom: 12, color: '#595959' }}>
+                  全部成分 ({product.ingredients.length}种)
+                </h4>
                 <div>
                   {product.ingredients.map((ingredient, index) => (
-                    <span key={index} className="ingredient-tag">{ingredient}</span>
+                    <span key={index} className="ingredient-tag">
+                      {ingredient}
+                    </span>
                   ))}
                 </div>
               </Col>
@@ -267,7 +309,9 @@ const ProductDetailPage: React.FC = () => {
                       style={{ marginBottom: 12 }}
                     />
                     {product.highAllergenIngredients.map((ingredient, index) => (
-                      <span key={index} className="ingredient-tag high-risk">{ingredient}</span>
+                      <span key={index} className="ingredient-tag high-risk">
+                        {ingredient}
+                      </span>
                     ))}
                   </div>
                 ) : (
@@ -293,10 +337,21 @@ const ProductDetailPage: React.FC = () => {
                 dataSource={product.inspectionResults}
                 renderItem={(item) => (
                   <List.Item style={{ padding: '16px 0', borderBottom: '1px solid #f0f0f0' }}>
-                    <div style={{ width: '100%', display: 'flex', justifyContent: 'space-between' }}>
+                    <div
+                      style={{ width: '100%', display: 'flex', justifyContent: 'space-between' }}
+                    >
                       <div>
                         <Space>
-                          <Tag color={item.result === '合格' ? 'green' : 'red'} icon={item.result === '合格' ? <CheckCircleOutlined /> : <CloseCircleOutlined />}>
+                          <Tag
+                            color={item.result === '合格' ? 'green' : 'red'}
+                            icon={
+                              item.result === '合格' ? (
+                                <CheckCircleOutlined />
+                              ) : (
+                                <CloseCircleOutlined />
+                              )
+                            }
+                          >
                             {item.result}
                           </Tag>
                           <strong>{item.inspectionOrg}</strong>
@@ -330,7 +385,13 @@ const ProductDetailPage: React.FC = () => {
                 renderItem={(item) => (
                   <List.Item style={{ padding: '16px 0', borderBottom: '1px solid #f0f0f0' }}>
                     <div style={{ width: '100%' }}>
-                      <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 8 }}>
+                      <div
+                        style={{
+                          display: 'flex',
+                          justifyContent: 'space-between',
+                          marginBottom: 8,
+                        }}
+                      >
                         <Space>
                           <Tag color={item.severity === '严重' ? 'red' : 'orange'}>
                             {item.severity}
@@ -360,10 +421,16 @@ const ProductDetailPage: React.FC = () => {
                 renderItem={(review: Review) => (
                   <List.Item className="review-item">
                     <div style={{ width: '100%' }}>
-                      <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 8 }}>
+                      <div
+                        style={{
+                          display: 'flex',
+                          justifyContent: 'space-between',
+                          marginBottom: 8,
+                        }}
+                      >
                         <Space wrap>
                           <Tag>
-                            {SKIN_TYPE_OPTIONS.find(s => s.value === review.skinType)?.label}
+                            {SKIN_TYPE_OPTIONS.find((s) => s.value === review.skinType)?.label}
                           </Tag>
                           <Tag>{review.childAge}岁</Tag>
                           {review.usageDuration && <Tag>使用{review.usageDuration}</Tag>}
@@ -378,7 +445,14 @@ const ProductDetailPage: React.FC = () => {
                       <p style={{ marginBottom: 8, color: '#262626' }}>{review.content}</p>
                       {review.hasAllergy && (
                         <div className="allergy-alert">
-                          <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 4 }}>
+                          <div
+                            style={{
+                              display: 'flex',
+                              alignItems: 'center',
+                              gap: 8,
+                              marginBottom: 4,
+                            }}
+                          >
                             <WarningOutlined style={{ color: '#ff4d4f' }} />
                             <strong style={{ color: '#cf1322' }}>出现过敏反应</strong>
                           </div>

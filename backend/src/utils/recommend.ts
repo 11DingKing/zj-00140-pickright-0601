@@ -8,9 +8,9 @@ import type {
   Review,
   AdverseReaction,
   InspectionResult,
-} from "@prisma/client";
-import { checkProductAllergens, type AllergenMatchResult } from "./allergen";
-import { calculateTrustIndex } from "./trustIndex";
+} from '@prisma/client';
+import { checkProductAllergens, type AllergenMatchResult } from './allergen';
+import { calculateTrustIndex } from './trustIndex';
 
 interface RecommendParams {
   childAge: number;
@@ -42,10 +42,7 @@ export interface ScoredProduct {
 }
 
 // 计算产品匹配度得分 (0-100)
-function calculateMatchScore(
-  product: ProductWithAllergenInfo,
-  params: RecommendParams,
-): number {
+function calculateMatchScore(product: ProductWithAllergenInfo, params: RecommendParams): number {
   let score = 0;
 
   // 1. 年龄匹配 (权重40%)
@@ -65,9 +62,9 @@ function calculateMatchScore(
   }
 
   // 2. 肤质匹配 (权重30%)
-  const highAllergens = JSON.parse(product.highAllergenIngredients || "[]");
+  const highAllergens = JSON.parse(product.highAllergenIngredients || '[]');
 
-  if (params.skinType === "sensitive") {
+  if (params.skinType === 'sensitive') {
     // 敏感肌优先选择无高致敏成分、极简配方的产品
     if (highAllergens.length === 0) {
       score += 30;
@@ -79,23 +76,17 @@ function calculateMatchScore(
     if (product.isMinimalFormula) {
       score += 10; // 额外加分
     }
-  } else if (params.skinType === "dry") {
+  } else if (params.skinType === 'dry') {
     // 干性肌肤 - 检查是否有保湿成分
-    const ingredients = JSON.parse(product.ingredients || "[]");
-    const moisturizingIngredients = [
-      "甘油",
-      "透明质酸",
-      "神经酰胺",
-      "角鲨烷",
-      "维生素E",
-    ];
+    const ingredients = JSON.parse(product.ingredients || '[]');
+    const moisturizingIngredients = ['甘油', '透明质酸', '神经酰胺', '角鲨烷', '维生素E'];
     const hasMoisturizing = ingredients.some((i: string) =>
       moisturizingIngredients.some((m) => i.includes(m)),
     );
     score += hasMoisturizing ? 30 : 20;
-  } else if (params.skinType === "oily") {
+  } else if (params.skinType === 'oily') {
     // 油性肌肤 - 检查是否无致痘成分
-    const comedogenicIngredients = ["棕榈酸", "硬脂酸", "羊毛脂", "矿物油"];
+    const comedogenicIngredients = ['棕榈酸', '硬脂酸', '羊毛脂', '矿物油'];
     const hasComedogenic = highAllergens.some((i: string) =>
       comedogenicIngredients.some((c) => i.includes(c)),
     );
@@ -140,18 +131,13 @@ export function getRecommendations(
   );
 
   // 添加过敏原检测信息
-  const productsWithAllergenInfo: ProductWithAllergenInfo[] = validProducts.map(
-    (product) => {
-      if (params.allergenProfiles && params.allergenProfiles.length > 0) {
-        const allergenInfo = checkProductAllergens(
-          product,
-          params.allergenProfiles,
-        );
-        return { ...product, allergenInfo };
-      }
-      return product;
-    },
-  );
+  const productsWithAllergenInfo: ProductWithAllergenInfo[] = validProducts.map((product) => {
+    if (params.allergenProfiles && params.allergenProfiles.length > 0) {
+      const allergenInfo = checkProductAllergens(product, params.allergenProfiles);
+      return { ...product, allergenInfo };
+    }
+    return product;
+  });
 
   // 计算匹配度并排序
   const scored = productsWithAllergenInfo.map((product) => {
@@ -160,10 +146,10 @@ export function getRecommendations(
     // 过敏原惩罚：如果产品含有用户过敏原，大幅降低匹配度
     if (product.allergenInfo?.hasAllergen) {
       const hasSevereAllergen = product.allergenInfo.matchedAllergens.some(
-        (a) => a.severity === "严重",
+        (a) => a.severity === '严重',
       );
       const hasModerateAllergen = product.allergenInfo.matchedAllergens.some(
-        (a) => a.severity === "中度",
+        (a) => a.severity === '中度',
       );
 
       if (hasSevereAllergen) {
@@ -188,9 +174,7 @@ export function getRecommendations(
     params.allergenProfiles.length > 0 &&
     params.excludeAllergenProducts
   ) {
-    filteredScored = scored.filter(
-      (item) => !item.product.allergenInfo?.hasAllergen,
-    );
+    filteredScored = scored.filter((item) => !item.product.allergenInfo?.hasAllergen);
   }
 
   // 按匹配度降序，相同匹配度按放心指数降序

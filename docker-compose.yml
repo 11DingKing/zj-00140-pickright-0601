@@ -1,0 +1,43 @@
+version: '3.8'
+
+services:
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    ports:
+      - '3001:3001'
+    volumes:
+      - backend-data:/app/prisma
+    environment:
+      - NODE_ENV=production
+      - PORT=3001
+    command: >
+      sh -c "npx prisma migrate deploy &&
+             node dist/server.js"
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    ports:
+      - '8080:80'
+    depends_on:
+      - backend
+
+  seed:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    volumes:
+      - backend-data:/app/prisma
+    depends_on:
+      - backend
+    profiles:
+      - seed
+    command: >
+      sh -c "npx prisma migrate deploy &&
+             node dist/seed.js"
+
+volumes:
+  backend-data:

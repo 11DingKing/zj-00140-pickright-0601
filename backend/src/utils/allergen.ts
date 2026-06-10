@@ -11,20 +11,29 @@ export interface AllergenMatchResult {
 }
 
 const ALLERGEN_TYPE_KEYWORDS: Record<string, string[]> = {
-  '香精': ['香精', '香料', '香水', '香精香料', '天然香精', '人工香精', '食用香精'],
-  '着色剂': ['色素', '着色剂', '染料', '色淀', '氧化铁', '人工色素', '天然色素', '炭黑', '二氧化钛'],
-  '防腐剂': ['防腐剂', '对羟基苯甲酸酯', '甲醛释放体', '异噻唑啉酮', '苯氧乙醇', '苯甲酸', '山梨酸', '丙酸钠'],
-  '酒精': ['酒精', '乙醇', '异丙醇'],
-  '矿物油': ['矿物油', '石蜡', '凡士林', '液体石蜡'],
-  '羊毛脂': ['羊毛脂', '羊毛脂醇', '乙酰化羊毛脂'],
-  '棕榈酸': ['棕榈酸', '棕榈酸酯', '棕榈酸异丙酯'],
-  '硬脂酸': ['硬脂酸', '硬脂酸酯', '硬脂酸甘油酯'],
-  '其他': [],
+  香精: ['香精', '香料', '香水', '香精香料', '天然香精', '人工香精', '食用香精'],
+  着色剂: ['色素', '着色剂', '染料', '色淀', '氧化铁', '人工色素', '天然色素', '炭黑', '二氧化钛'],
+  防腐剂: [
+    '防腐剂',
+    '对羟基苯甲酸酯',
+    '甲醛释放体',
+    '异噻唑啉酮',
+    '苯氧乙醇',
+    '苯甲酸',
+    '山梨酸',
+    '丙酸钠',
+  ],
+  酒精: ['酒精', '乙醇', '异丙醇'],
+  矿物油: ['矿物油', '石蜡', '凡士林', '液体石蜡'],
+  羊毛脂: ['羊毛脂', '羊毛脂醇', '乙酰化羊毛脂'],
+  棕榈酸: ['棕榈酸', '棕榈酸酯', '棕榈酸异丙酯'],
+  硬脂酸: ['硬脂酸', '硬脂酸酯', '硬脂酸甘油酯'],
+  其他: [],
 };
 
 export function checkProductAllergens(
   product: Product,
-  allergenProfiles: AllergenProfile[]
+  allergenProfiles: AllergenProfile[],
 ): AllergenMatchResult {
   const result: AllergenMatchResult = {
     hasAllergen: false,
@@ -70,7 +79,7 @@ export function checkProductAllergens(
 function getAllergenKeywords(allergenType: string, allergenName: string): string[] {
   const typeKeywords = ALLERGEN_TYPE_KEYWORDS[allergenType] || [];
   const nameKeywords = [allergenName];
-  
+
   if (allergenName.length <= 2) {
     nameKeywords.push(allergenName);
   } else {
@@ -78,21 +87,21 @@ function getAllergenKeywords(allergenType: string, allergenName: string): string
       nameKeywords.push(allergenName.substring(i, i + 2));
     }
   }
-  
+
   return [...typeKeywords, ...nameKeywords];
 }
 
 export function filterProductsByAllergens<T extends Product>(
   products: T[],
   allergenProfiles: AllergenProfile[],
-  excludeMode: boolean = true
+  excludeMode: boolean = true,
 ): Array<{ product: T; allergenInfo: AllergenMatchResult }> {
   return products
-    .map(product => ({
+    .map((product) => ({
       product,
       allergenInfo: checkProductAllergens(product, allergenProfiles),
     }))
-    .filter(item => !excludeMode || !item.allergenInfo.hasAllergen);
+    .filter((item) => !excludeMode || !item.allergenInfo.hasAllergen);
 }
 
 export function getSeverityColor(severity: string): string {
