@@ -314,8 +314,8 @@ const ReviewPage: React.FC = () => {
                           {review.product.recordNumber}
                         </Descriptions.Item>
                         <Descriptions.Item label="放心指数">
-                          <span style={{ color: review.product.trustLevel.color, fontWeight: 600 }}>
-                            {review.product.trustIndex.toFixed(1)}
+                          <span style={{ color: review.product.trustLevel?.color || '#1890ff', fontWeight: 600 }}>
+                            {typeof review.product.trustIndex === 'number' ? review.product.trustIndex.toFixed(1) : review.product.trustIndex || '-'}
                           </span>
                         </Descriptions.Item>
                       </Descriptions>

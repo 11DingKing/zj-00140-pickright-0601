@@ -37,7 +37,13 @@ export const getRecommendedProducts = async (req: Request, res: Response) => {
         }
       },
       include: {
-        brand: true
+        brand: {
+          include: {
+            blacklist: true,
+            whitelist: true
+          }
+        },
+        blacklist: true
       }
     });
 

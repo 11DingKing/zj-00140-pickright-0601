@@ -1,6 +1,6 @@
 // 产品推荐算法
 
-import type { Product, Brand } from '@prisma/client';
+import type { Product, Brand, Blacklist } from '@prisma/client';
 
 interface RecommendParams {
   childAge: number;
@@ -10,7 +10,11 @@ interface RecommendParams {
 }
 
 interface ProductWithBrand extends Product {
-  brand: Brand;
+  brand: Brand & {
+    blacklist: Blacklist | null;
+    whitelist?: any;
+  };
+  blacklist: Blacklist | null;
 }
 
 // 计算产品匹配度得分 (0-100)
